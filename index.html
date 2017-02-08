@@ -25,9 +25,24 @@
 	 renderer.setSize( window.innerWidth, window.innerHeight );
 	 renderer.shadowMap.enabled = true;
 	 document.body.appendChild( renderer.domElement );
+	 
+	 renderer.domElement.addEventListener("wheel",
+		 function (e) {
+			console.log(e);
+			e.preventDefault();
+			if(e.deltaY < 0)
+			{
+				camera.position.z -= 0.4;
+			}
+			else
+			{
+				camera.position.z += 0.4;
+			}
+		 }
+	 );
+	 
 
-	 camera.position.z = 15;
-	 camera.position.y = 2;
+	 camera.position.z = 16;
 	 camera.rotation.x = -0.2;
 
 	 // Initialisation of your objects / materials / light
@@ -143,8 +158,25 @@
 		 earth.rotation.y += earthDay;
 		 mars.rotation.y += earthDay/0.975;
 		 jupiter.rotation.y += earthDay/2.6;
+		 
+		 //zoomIn();
+		 //zoomOut();
 
 	     renderer.render( scene, camera );
+	 }
+	 
+	 function zoomIn() {
+		if(camera.position.z > 4)
+		{
+			camera.position.z -= 0.1;
+		}
+	 }
+	 
+	 function zoomOut() {
+		if(camera.position.z < 15)
+		{
+			camera.position.z -= 0.1;
+		}
 	 }
 
 	 render();
