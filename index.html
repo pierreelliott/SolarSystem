@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+	<meta charset="utf-8">
+	<title>My first three.js app</title>
+	<style>
+	 body { margin: 0; }
+	 canvas { width: 100%; height: 90% }
+	 #toolbar { color: white; position: absolute; }
+	 #toolbar a { color: lightgrey; }
+	 #toolbar a:hover { text-decoration: none; }
+	</style>
+    </head>
+    <body>
+	<p id="toolbar">
+	    <a href="https://threejs.org/docs/index.html#Manual/Introduction/Creating_a_scene">Documentation</a>
+	    <a href="mailto:guillaum.bouchard@gmail.com">guillaum.bouchard@gmail.com</a>
+	</p>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.js"></script>
+	<script>
+	 // Initialisation of the scene / camera / renderer
+	 var scene = new THREE.Scene();
+	 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+	 var renderer = new THREE.WebGLRenderer();
+	 renderer.setSize( window.innerWidth, window.innerHeight );
+	 renderer.shadowMap.enabled = true;
+	 document.body.appendChild( renderer.domElement );
+
+	 camera.position.z = 15;
+	 camera.position.y = 2;
+	 camera.rotation.x = -0.2;
+
+	 // Initialisation of your objects / materials / light
+	 var solarSystem = new THREE.Object3D();
+	 scene.add(solarSystem);
+	 
+	 var mercureReferenceSun = new THREE.Object3D();
+	 var venusReferenceSun = new THREE.Object3D();
+	 var earthReferenceSun = new THREE.Object3D();
+	 var earthReference = new THREE.Object3D();
+	 var moonReference = new THREE.Object3D();
+	 var marsReferenceSun = new THREE.Object3D();
+	 var jupiterReferenceSun = new THREE.Object3D();
+
+	 var ball = new THREE.SphereGeometry(1, 32, 32);
+	
+	 var sunTexture = new THREE.TextureLoader().load( "sun.jpg" );
+	 var mercureTexture = new THREE.TextureLoader().load( "mercure.jpg" );
+	 var venusTexture = new THREE.TextureLoader().load( "venus.jpg" );
+	 var earthTexture = new THREE.TextureLoader().load( "earth.jpg" );
+	 var moonTexture = new THREE.TextureLoader().load( "moon.jpg" );
+	 var marsTexture = new THREE.TextureLoader().load( "mars.jpg" );
+	 var jupiterTexture = new THREE.TextureLoader().load( "jupiter.jpg" );
+	 
+	 var sunMaterial = new THREE.MeshPhongMaterial( { emissiveMap: sunTexture, emissive: 0xFFFFFF } );
+	 var mercureMaterial = new THREE.MeshPhongMaterial( { map: mercureTexture } );
+	 var venusMaterial = new THREE.MeshPhongMaterial( { map: venusTexture } );
+	 var earthMaterial = new THREE.MeshPhongMaterial( { map: earthTexture } );
+	 var moonMaterial = new THREE.MeshPhongMaterial( { map: moonTexture } );
+	 var marsMaterial = new THREE.MeshPhongMaterial( { map: marsTexture } );
+	 var jupiterMaterial = new THREE.MeshPhongMaterial( { map: jupiterTexture } );
+	 
+	 
+	 var light = new THREE.PointLight( 0xFFFFFF, 1, 100, 2 );
+	 var ambientlight = new THREE.AmbientLight( 0x202020 );
+	 scene.add(light);
+	 scene.add(ambientlight);
+	 
+	 var earth = new THREE.Mesh(ball, earthMaterial);
+	 var moon = new THREE.Mesh(ball, moonMaterial);
+	 var mars = new THREE.Mesh(ball, marsMaterial);
+	 var sun = new THREE.Mesh(ball, sunMaterial);
+	 var venus = new THREE.Mesh(ball, venusMaterial);
+	 var mercure = new THREE.Mesh(ball, mercureMaterial);
+	 var jupiter = new THREE.Mesh(ball, jupiterMaterial);
+	 sun.scale.set(1.5, 1.5, 1.5);
+	 
+	 var UA = 5;
+	 var earthYear = 0.0005;
+	 var earthDay = earthYear*365.25;
+	 
+	 //sun.setMap({ map: sunTexture });
+	 
+	 solarSystem.add(sun);
+	 
+	 solarSystem.add(earthReferenceSun);
+	 solarSystem.add(marsReferenceSun);
+	 solarSystem.add(mercureReferenceSun);
+	 solarSystem.add(venusReferenceSun);
+	 solarSystem.add(jupiterReferenceSun);
+	 
+	 mercureReferenceSun.add(mercure);
+	 mercure.scale.set(0.1,0.1,0.1);
+	 mercure.position.x = 0.4*UA;
+	 
+	 venusReferenceSun.add(venus);
+	 venus.scale.set(0.29,0.29,0.29);
+	 venus.position.x = 0.7*UA;
+	 
+	 earthReferenceSun.add(earthReference);
+	 earthReference.position.x = UA;
+	 earthReference.scale.set(0.3,0.3,0.3);
+	 
+	 earthReference.add(earth);
+	 
+	 earthReference.add(moonReference);
+	 moonReference.add(moon);
+	 moon.scale.set(0.3,0.3,0.3);
+	 moon.position.x = 1;
+	 
+	 marsReferenceSun.add(mars);
+	 mars.scale.set(0.16,0.16,0.16);
+	 mars.position.x = 1.5*UA;
+	 
+	 // Pour les astéroïdes
+	 /*
+		asteroideX = Math.random (de 0 à 13)
+		y = Math.sqrt(13*13 - asteroideX)
+	 */
+	 
+	 jupiterReferenceSun.add(jupiter);
+	 jupiter.scale.set(1.2,1.2,1.2);
+	 jupiter.position.x = 5.2*UA;
+
+	 // This is executed for each frames
+	 function render() {
+	     requestAnimationFrame( render );
+
+	     // Animation code goes here
+		 
+		 // Période de révolution (tour autour du soleil)
+		 mercureReferenceSun.rotation.y += earthYear*4.14;
+		 venusReferenceSun.rotation.y += earthYear*1.62;
+	     earthReferenceSun.rotation.y += earthYear;
+		 moonReference.rotation.y += earthYear*13;
+		 marsReferenceSun.rotation.y += earthYear/1.8;
+		 jupiterReferenceSun.rotation.y += earthYear/12;
+		 
+		 // Période de rotation (tour sur soi-même)
+		 sun.rotation.y += earthDay/26;
+		 mercure.rotation.y += earthDay/59;
+		 venus.rotation.y += -earthDay/243;
+		 earth.rotation.y += earthDay;
+		 mars.rotation.y += earthDay/0.975;
+		 jupiter.rotation.y += earthDay/2.6;
+
+	     renderer.render( scene, camera );
+	 }
+
+	 render();
+	</script>
+    </body>
+</html>
