@@ -5,7 +5,7 @@
 	<title>My first three.js app</title>
 	<style>
 	 body { margin: 0; }
-	 canvas { width: 100%; height: 100% }
+	 canvas { width: 100vw; height: 100vh }
 	 #toolbar { color: white; position: absolute; }
 	 #toolbar a { color: lightgrey; }
 	 #toolbar a:hover { text-decoration: none; }
@@ -21,11 +21,22 @@
 	 // Initialisation of the scene / camera / renderer
 	 var scene = new THREE.Scene();
 	 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+	 camera.position.z = 16;
+	 camera.rotation.x = -0.2;
+	 
+	 
 	 var renderer = new THREE.WebGLRenderer();
 	 renderer.setSize( window.innerWidth, window.innerHeight );
 	 renderer.shadowMap.enabled = true;
 	 document.body.appendChild( renderer.domElement );
 	 
+	 document.addEventListener("resize",
+		function () {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+		}, false);
+	
 	 renderer.domElement.addEventListener("wheel",
 		 function (e) {
 			console.log(e);
@@ -42,8 +53,6 @@
 	 );
 	 
 
-	 camera.position.z = 16;
-	 camera.rotation.x = -0.2;
 
 	 // Initialisation of your objects / materials / light
 	 var solarSystem = new THREE.Object3D();
@@ -56,8 +65,13 @@
 	 var moonReference = new THREE.Object3D();
 	 var marsReferenceSun = new THREE.Object3D();
 	 var jupiterReferenceSun = new THREE.Object3D();
+	 var saturnReferenceSun = new THREE.Object3D();
+	 var saturnReference = new THREE.Object3D();
+	 var uranusReferenceSun = new THREE.Object3D();
+	 var neptuneReferenceSun = new THREE.Object3D();
 
 	 var ball = new THREE.SphereGeometry(1, 32, 32);
+	 var ring = new THREE.RingBufferGeometry( 7, 10, 30);
 	
 	 var sunTexture = new THREE.TextureLoader().load( "sun.jpg" );
 	 var mercureTexture = new THREE.TextureLoader().load( "mercure.jpg" );
@@ -66,14 +80,22 @@
 	 var moonTexture = new THREE.TextureLoader().load( "moon.jpg" );
 	 var marsTexture = new THREE.TextureLoader().load( "mars.jpg" );
 	 var jupiterTexture = new THREE.TextureLoader().load( "jupiter.jpg" );
+	 var saturnTexture = new THREE.TextureLoader().load( "saturn.jpg" );
+	 var saturnRingsTexture = new THREE.TextureLoader().load( "saturn_rings.jpg" );
+	 var uranusTexture = new THREE.TextureLoader().load( "uranus.jpg" );
+	 var neptuneTexture = new THREE.TextureLoader().load( "neptune.jpg" );
 	 
 	 var sunMaterial = new THREE.MeshPhongMaterial( { emissiveMap: sunTexture, emissive: 0xFFFFFF } );
 	 var mercureMaterial = new THREE.MeshPhongMaterial( { map: mercureTexture } );
 	 var venusMaterial = new THREE.MeshPhongMaterial( { map: venusTexture } );
-	 var earthMaterial = new THREE.MeshPhongMaterial( { map: earthTexture } );
+	 var earthMaterial = new THREE.MeshPhongMaterial( { map: earthTexture, side: THREE.DoubleSide } );
 	 var moonMaterial = new THREE.MeshPhongMaterial( { map: moonTexture } );
 	 var marsMaterial = new THREE.MeshPhongMaterial( { map: marsTexture } );
 	 var jupiterMaterial = new THREE.MeshPhongMaterial( { map: jupiterTexture } );
+	 var saturnMaterial = new THREE.MeshPhongMaterial( { map: saturnTexture } );
+	 var saturnRingsMaterial = new THREE.MeshPhongMaterial( { map: saturnRingsTexture } );
+	 var uranusMaterial = new THREE.MeshPhongMaterial( { map: uranusTexture } );
+	 var neptuneMaterial = new THREE.MeshPhongMaterial( { map: neptuneTexture } );
 	 
 	 
 	 var light = new THREE.PointLight( 0xFFFFFF, 1, 100, 2 );
@@ -88,6 +110,10 @@
 	 var venus = new THREE.Mesh(ball, venusMaterial);
 	 var mercure = new THREE.Mesh(ball, mercureMaterial);
 	 var jupiter = new THREE.Mesh(ball, jupiterMaterial);
+	 var saturn = new THREE.Mesh(ball, saturnMaterial);
+	 var saturn = new THREE.Mesh(ring, saturnRingsMaterial);
+	 var uranus = new THREE.Mesh(ball, uranusMaterial);
+	 var neptune = new THREE.Mesh(ball, neptuneMaterial);
 	 sun.scale.set(1.5, 1.5, 1.5);
 	 
 	 var UA = 5;
@@ -103,6 +129,9 @@
 	 solarSystem.add(mercureReferenceSun);
 	 solarSystem.add(venusReferenceSun);
 	 solarSystem.add(jupiterReferenceSun);
+	 solarSystem.add(saturnReferenceSun);
+	 solarSystem.add(uranusReferenceSun);
+	 solarSystem.add(neptuneReferenceSun);
 	 
 	 mercureReferenceSun.add(mercure);
 	 mercure.scale.set(0.1,0.1,0.1);
@@ -115,8 +144,8 @@
 	 earthReferenceSun.add(earthReference);
 	 earthReference.position.x = UA;
 	 earthReference.scale.set(0.3,0.3,0.3);
-	 
 	 earthReference.add(earth);
+	 earth.rotation.z = 0.2;
 	 
 	 earthReference.add(moonReference);
 	 moonReference.add(moon);
@@ -136,6 +165,20 @@
 	 jupiterReferenceSun.add(jupiter);
 	 jupiter.scale.set(1.2,1.2,1.2);
 	 jupiter.position.x = 5.2*UA;
+	 
+	 saturnReferenceSun.add(saturnReference);
+	 saturnReference.position.x = 9.5*UA;
+	 saturnReference.scale.set(1.05,1.05,1.05);
+	 saturnReference.add(saturn);
+	 
+	 uranusReferenceSun.add(uranusReference);
+	 uranusReference.scale.set(1.2,1.2,1.2);
+	 uranusReference.position.x = 19.6*UA;
+	 uranusReference.rotation.z = Math.PI/2;
+	 
+	 neptuneReferenceSun.add(neptune);
+	 neptune.scale.set(1.2,1.2,1.2);
+	 neptune.position.x = 5.2*UA;
 
 	 // This is executed for each frames
 	 function render() {
