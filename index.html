@@ -30,6 +30,7 @@
 	 renderer.shadowMap.enabled = true;
 	 document.body.appendChild( renderer.domElement );
 	 
+	 // Ne fonctionne pas
 	 document.addEventListener("resize",
 		function () {
 			camera.aspect = window.innerWidth / window.innerHeight;
@@ -72,7 +73,7 @@
 	 var neptuneReferenceSun = new THREE.Object3D();
 
 	 var ball = new THREE.SphereGeometry(1, 32, 32);
-	 var ring = new THREE.RingBufferGeometry( 7, 10, 30);
+	 var ring = new THREE.RingGeometry( 7, 10, 30);
 	
 	 var sunTexture = new THREE.TextureLoader().load( "sun.jpg" );
 	 var mercureTexture = new THREE.TextureLoader().load( "mercure.jpg" );
@@ -82,7 +83,7 @@
 	 var marsTexture = new THREE.TextureLoader().load( "mars.jpg" );
 	 var jupiterTexture = new THREE.TextureLoader().load( "jupiter.jpg" );
 	 var saturnTexture = new THREE.TextureLoader().load( "saturn.jpg" );
-	 var saturnRingsTexture = new THREE.TextureLoader().load( "saturn_rings.jpg" );
+	 var saturnRingsTexture = new THREE.TextureLoader().load( "saturn_rings.png" );
 	 var uranusTexture = new THREE.TextureLoader().load( "uranus.jpg" );
 	 var neptuneTexture = new THREE.TextureLoader().load( "neptune.jpg" );
 	 
@@ -94,7 +95,7 @@
 	 var marsMaterial = new THREE.MeshPhongMaterial( { map: marsTexture } );
 	 var jupiterMaterial = new THREE.MeshPhongMaterial( { map: jupiterTexture } );
 	 var saturnMaterial = new THREE.MeshPhongMaterial( { map: saturnTexture } );
-	 var saturnRingsMaterial = new THREE.MeshPhongMaterial( { map: saturnRingsTexture } );
+	 var saturnRingsMaterial = new THREE.MeshPhongMaterial( { map: saturnRingsTexture, side: THREE.DoubleSide } );
 	 var uranusMaterial = new THREE.MeshPhongMaterial( { map: uranusTexture } );
 	 var neptuneMaterial = new THREE.MeshPhongMaterial( { map: neptuneTexture } );
 	 
