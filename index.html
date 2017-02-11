@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
 	<meta charset="utf-8">
-	<title>My first three.js app</title>
+	<title>Solar System</title>
 	<style>
 	 body { margin: 0; }
 	 canvas { width: 100vw; height: 100vh }
@@ -17,182 +17,77 @@
 	    <a href="mailto:guillaum.bouchard@gmail.com">guillaum.bouchard@gmail.com</a>
 	</p>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.js"></script>
+	<script src="js/FlyControls.js"></script>
+	<script src="objects.js"></script>
+	<script src="viewFunctions.js"></script>
 	<script>
 	 // Initialisation of the scene / camera / renderer
 	 var scene = new THREE.Scene();
 	 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 	 camera.position.z = 20;
 	 camera.rotation.x = -0.2;
-	 
-	 
+
+
 	 var renderer = new THREE.WebGLRenderer();
 	 renderer.setSize( window.innerWidth, window.innerHeight );
 	 renderer.shadowMap.enabled = true;
+	 renderer.domElement.id = "mainView";
 	 document.body.appendChild( renderer.domElement );
-	 
-	 // Ne fonctionne pas
-	 document.addEventListener("resize",
-		function () {
-			camera.aspect = window.innerWidth / window.innerHeight;
-			camera.updateProjectionMatrix();
-			renderer.setSize( window.innerWidth, window.innerHeight );
-		}, false);
-	
-	 renderer.domElement.addEventListener("wheel",
-		 function (e) {
-			console.log(e);
-			e.preventDefault();
-			if(e.deltaY < 0)
-			{
-				camera.position.z -= 1;
-			}
-			else
-			{
-				camera.position.z += 1;
-			}
-		 }
-	 );
-	 
 
+	 // Ne fonctionne pas
+	 document.addEventListener("resize", onWindowResize );
+
+	 renderer.domElement.addEventListener("wheel", cameraZoom );
+	 renderer.domElement.addEventListener("mousedown", leftClickOnView );
+	 renderer.domElement.addEventListener("touchstart", leftClickOnView );
+
+	 var clock = new THREE.Clock();
+	 var delta = clock.getDelta();
+	 var controls = new THREE.FlyControls( camera );
+	 controls.movementSpeed = 10000;
+	 controls.domElement = renderer.domElement;
+	 controls.rollSpeed = Math.PI / 24;
+	 controls.autoForward = false;
+	 controls.dragToLook = true;
+	 /*
+	 ######################################################
+	 Normalement faudrait créer les variables globales et la fonction init() devrait les initialiser
+	 Mais ça fonctionne pas donc pour l'instant elles sont créées par la fonction (et elles sont globales là)
+
+	 var solarSystem;
+
+ 	 var mercureReferenceSun, venusReferenceSun, earthReferenceSun, earthReference, moonReference, marsReferenceSun;
+	 var jupiterReferenceSun, saturnReferenceSun, saturnReference, uranusReferenceSun, uranusReference, neptuneReferenceSun;
+
+ 	 var ball, ring;
+
+	 var textureLoader;
+ 	 var starsTexture;
+ 	 var sunTexture, mercureTexture, venusTexture, earthTexture, moonTexture, marsTexture ;
+ 	 var jupiterTexture, saturnTexture, saturnRingsTexture, uranusTexture, neptuneTexture ;
+
+ 	 var starsMaterial;
+ 	 var sunMaterial, mercureMaterial, venusMaterial, earthMaterial, moonMaterial, marsMaterial;
+ 	 var jupiterMaterial, saturnMaterial, saturnRingsMaterial, uranusMaterial, neptuneMaterial;
+
+
+ 	 var light, ambientlight ;
+
+ 	 var stars;
+ 	 var sun, mercure, venus, earth, moon, mars;
+ 	 var jupiter, saturn, saturnRings, uranus, neptune;
+
+ 	 var UA, earthYear, earthDay ;*/
 
 	 // Initialisation of your objects / materials / light
-	 var solarSystem = new THREE.Object3D();
-	 scene.add(solarSystem);
-	 
-	 var mercureReferenceSun = new THREE.Object3D();
-	 var venusReferenceSun = new THREE.Object3D();
-	 var earthReferenceSun = new THREE.Object3D();
-	 var earthReference = new THREE.Object3D();
-	 var moonReference = new THREE.Object3D();
-	 var marsReferenceSun = new THREE.Object3D();
-	 var jupiterReferenceSun = new THREE.Object3D();
-	 var saturnReferenceSun = new THREE.Object3D();
-	 var saturnReference = new THREE.Object3D();
-	 var uranusReferenceSun = new THREE.Object3D();
-	 var uranusReference = new THREE.Object3D();
-	 var neptuneReferenceSun = new THREE.Object3D();
-
-	 var ball = new THREE.SphereGeometry(1, 32, 32);
-	 var ring = new THREE.RingGeometry( 7, 10, 30);
-	
-	 var sunTexture = new THREE.TextureLoader().load( "sun.jpg" );
-	 var mercureTexture = new THREE.TextureLoader().load( "mercure.jpg" );
-	 var venusTexture = new THREE.TextureLoader().load( "venus.jpg" );
-	 var earthTexture = new THREE.TextureLoader().load( "earth.jpg" );
-	 var moonTexture = new THREE.TextureLoader().load( "moon.jpg" );
-	 var marsTexture = new THREE.TextureLoader().load( "mars.jpg" );
-	 var jupiterTexture = new THREE.TextureLoader().load( "jupiter.jpg" );
-	 var saturnTexture = new THREE.TextureLoader().load( "saturn.jpg" );
-	 var saturnRingsTexture = new THREE.TextureLoader().load( "saturn_rings.png" );
-	 var uranusTexture = new THREE.TextureLoader().load( "uranus.jpg" );
-	 var neptuneTexture = new THREE.TextureLoader().load( "neptune.jpg" );
-	 
-	 var sunMaterial = new THREE.MeshPhongMaterial( { emissiveMap: sunTexture, emissive: 0xFFFFFF } );
-	 var mercureMaterial = new THREE.MeshPhongMaterial( { map: mercureTexture } );
-	 var venusMaterial = new THREE.MeshPhongMaterial( { map: venusTexture } );
-	 var earthMaterial = new THREE.MeshPhongMaterial( { map: earthTexture, side: THREE.DoubleSide } );
-	 var moonMaterial = new THREE.MeshPhongMaterial( { map: moonTexture } );
-	 var marsMaterial = new THREE.MeshPhongMaterial( { map: marsTexture } );
-	 var jupiterMaterial = new THREE.MeshPhongMaterial( { map: jupiterTexture } );
-	 var saturnMaterial = new THREE.MeshPhongMaterial( { map: saturnTexture } );
-	 var saturnRingsMaterial = new THREE.MeshPhongMaterial( { map: saturnRingsTexture, side: THREE.DoubleSide } );
-	 var uranusMaterial = new THREE.MeshPhongMaterial( { map: uranusTexture } );
-	 var neptuneMaterial = new THREE.MeshPhongMaterial( { map: neptuneTexture } );
-	 
-	 
-	 var light = new THREE.PointLight( 0xFFFFFF, 1, 200, 2 );
-	 var ambientlight = new THREE.AmbientLight( 0x202020 );
-	 scene.add(light);
-	 scene.add(ambientlight);
-	 
-	 var earth = new THREE.Mesh(ball, earthMaterial);
-	 var moon = new THREE.Mesh(ball, moonMaterial);
-	 var mars = new THREE.Mesh(ball, marsMaterial);
-	 var sun = new THREE.Mesh(ball, sunMaterial);
-	 var venus = new THREE.Mesh(ball, venusMaterial);
-	 var mercure = new THREE.Mesh(ball, mercureMaterial);
-	 var jupiter = new THREE.Mesh(ball, jupiterMaterial);
-	 var saturn = new THREE.Mesh(ball, saturnMaterial);
-	 var saturnRings = new THREE.Mesh(ring, saturnRingsMaterial);
-	 var uranus = new THREE.Mesh(ball, uranusMaterial);
-	 var neptune = new THREE.Mesh(ball, neptuneMaterial);
-	 sun.scale.set(1.5, 1.5, 1.5);
-	 
-	 // Pour que ce soit un peu plus réaliste : sun.scale(10,10,10) et UA = 30
-	 var UA = 5;
-	 var earthYear = 0.0005;
-	 var earthDay = earthYear*365.25;
-	 
-	 //sun.setMap({ map: sunTexture });
-	 
-	 solarSystem.add(sun);
-	 
-	 solarSystem.add(earthReferenceSun);
-	 solarSystem.add(marsReferenceSun);
-	 solarSystem.add(mercureReferenceSun);
-	 solarSystem.add(venusReferenceSun);
-	 solarSystem.add(jupiterReferenceSun);
-	 solarSystem.add(saturnReferenceSun);
-	 solarSystem.add(uranusReferenceSun);
-	 solarSystem.add(neptuneReferenceSun);
-	 
-	 mercureReferenceSun.add(mercure);
-	 mercure.scale.set(0.1,0.1,0.1);
-	 mercure.position.x = 0.4*UA;
-	 
-	 venusReferenceSun.add(venus);
-	 venus.scale.set(0.29,0.29,0.29);
-	 venus.position.x = 0.7*UA;
-	 
-	 earthReferenceSun.add(earthReference);
-	 earthReference.position.x = UA;
-	 earthReference.scale.set(0.3,0.3,0.3);
-	 earthReference.add(earth);
-	 earth.rotation.z = 0.2;
-	 
-	 earthReference.add(moonReference);
-	 moonReference.add(moon);
-	 moon.scale.set(0.273,0.273,0.273);
-	 moon.position.x = 1.8;
-	 
-	 marsReferenceSun.add(mars);
-	 mars.scale.set(0.16,0.16,0.16);
-	 mars.position.x = 1.5*UA;
-	 
-	 // Pour les astéroïdes
-	 /*
-		asteroideX = Math.random (de 0 à 13)
-		y = Math.sqrt(13*13 - asteroideX)
-	 */
-	 
-	 jupiterReferenceSun.add(jupiter);
-	 jupiter.scale.set(1.2,1.2,1.2);
-	 jupiter.position.x = 5.2*UA;
-	 
-	 saturnReferenceSun.add(saturnReference);
-	 saturnReference.position.x = 9.5*UA;
-	 saturnReference.scale.set(1.05,1.05,1.05);
-	 saturnReference.add(saturn);
-	 saturnReference.add(saturnRings);
-	 saturnRings.rotation.x = 3.14/3;
-	 saturnRings.scale.set(0.4,0.4,0.4);
-	 
-	 uranusReferenceSun.add(uranusReference);
-	 uranusReference.scale.set(1.2,1.2,1.2);
-	 uranusReference.position.x = 19.6*UA;
-	 uranusReference.rotation.z = 3.14/2;
-	 uranusReference.add(uranus);
-	 
-	 neptuneReferenceSun.add(neptune);
-	 neptune.scale.set(1.2,1.2,1.2);
-	 neptune.position.x = 30*UA;
+	 init();
 
 	 // This is executed for each frames
 	 function render() {
 	     requestAnimationFrame( render );
 
 	     // Animation code goes here
-		 
+
 		 // Période de révolution (tour autour du soleil)
 		 mercureReferenceSun.rotation.y += earthYear*4.14;
 		 venusReferenceSun.rotation.y += earthYear*1.62;
@@ -203,7 +98,7 @@
 		 saturnReferenceSun.rotation.y += earthYear/29;
 		 uranusReferenceSun.rotation.y += earthYear/84;
 		 neptuneReferenceSun.rotation.y += earthYear/164;
-		 
+
 		 // Période de rotation (tour sur soi-même)
 		 sun.rotation.y += earthDay/26;
 		 mercure.rotation.y += earthDay/59;
@@ -216,21 +111,8 @@
 		 uranus.rotation.y += earthDay*1.7;
 		 neptune.rotation.y += earthDay*1.5;
 
+		 controls.update( delta );
 	     renderer.render( scene, camera );
-	 }
-	 
-	 function zoomIn() {
-		if(camera.position.z > 4)
-		{
-			camera.position.z -= 0.1;
-		}
-	 }
-	 
-	 function zoomOut() {
-		if(camera.position.z < 15)
-		{
-			camera.position.z -= 0.1;
-		}
 	 }
 
 	 render();
