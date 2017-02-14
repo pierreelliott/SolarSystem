@@ -4,6 +4,7 @@ function initObjects() {
 	solarSystem = new THREE.Object3D();
 
 	mercureReferenceSun = new THREE.Object3D();
+	mercureReference = new THREE.Object3D();
 	venusReferenceSun = new THREE.Object3D();
 	earthReferenceSun = new THREE.Object3D();
 	earthReference = new THREE.Object3D();
@@ -105,7 +106,8 @@ function init() {
 
 	console.log("Add references to sun position");
 
-	mercureReferenceSun.add(mercure);
+	mercureReferenceSun.add(mercureReference);
+	mercureReference.add(mercure);
 	mercure.scale.set(0.1,0.1,0.1);
 	mercure.position.x = 0.4*UA;
 
@@ -160,3 +162,39 @@ function init() {
 
 	console.log("Add all planets now");
 }
+
+function ajouterTrainee(reference) {
+	var traineeReference = new THREE.Object3D();
+	var traineeTexture = new THREE.TextureLoader().load( "mercure.jpg" );
+	var traineeMaterial = new THREE.MeshPhongMaterial( { color: 0xF0F0F0 } );
+	
+	reference.add(traineeReference);
+	
+	for(var i = 0; i < 20; i++) {
+		var trainee = new THREE.Mesh(ball, traineeMaterial);
+		trainee.scale.set(0.2,0.2,0.2);
+		
+		traineeReference.add(trainee);
+		trainee.position.z = 2;
+		traineeReference.rotation.z -= 0.01;
+	}
+}
+
+function ajouterTrainee2(reference) {
+	var p = new THREE.Vector3();
+	var traineeReference = new THREE.Object3D();
+	var traineeMaterial = new THREE.MeshPhongMaterial( { color: 0xF0F0F0 } );
+	trainee = new THREE.Mesh(ball, traineeMaterial);
+	
+	var mat = reference.matrixWorld;
+	p.applyMatrix4(mat);
+	
+	reference.add(traineeReference);
+	solarSystem.add(trainee);
+	trainee.scale.set(0.1,0.1,0.1);
+	
+	console.log(p);
+	trainee.position.copy(p);
+}
+
+

@@ -18,14 +18,14 @@
 	</p>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.js"></script>
 	<script src="js/FlyControls.js"></script>
-	<script src="objects.js"></script>
-	<script src="viewFunctions.js"></script>
+	<script src="js/objects.js"></script>
+	<script src="js/viewFunctions.js"></script>
+	<script src="js/OrbitControls.js"></script>
 	<script>
 	 // Initialisation of the scene / camera / renderer
 	 var scene = new THREE.Scene();
 	 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-	 camera.position.z = 20;
-	 camera.rotation.x = -0.2;
+	 
 
 
 	 var renderer = new THREE.WebGLRenderer();
@@ -37,18 +37,19 @@
 	 // Ne fonctionne pas
 	 document.addEventListener("resize", onWindowResize );
 
-	 renderer.domElement.addEventListener("wheel", cameraZoom );
+	 /*renderer.domElement.addEventListener("wheel", cameraZoom );
 	 renderer.domElement.addEventListener("mousedown", leftClickOnView );
-	 renderer.domElement.addEventListener("touchstart", leftClickOnView );
+	 renderer.domElement.addEventListener("touchstart", leftClickOnView );*/
 
 	 var clock = new THREE.Clock();
 	 var delta = clock.getDelta();
-	 var controls = new THREE.FlyControls( camera );
+	 /*var controls = new THREE.FlyControls( camera );
 	 controls.movementSpeed = 10000;
 	 controls.domElement = renderer.domElement;
 	 controls.rollSpeed = Math.PI / 24;
 	 controls.autoForward = false;
-	 controls.dragToLook = true;
+	 controls.dragToLook = true;*/
+	 
 	 /*
 	 ######################################################
 	 Normalement faudrait créer les variables globales et la fonction init() devrait les initialiser
@@ -81,12 +82,27 @@
 
 	 // Initialisation of your objects / materials / light
 	 init();
+	 
+	 var refCamera = new THREE.Object3D();
+	 
+	 //moon.add(refCamera);
+	 //refCamera.add(camera);
+	 
+	 camera.position.z = 20;
+	 camera.rotation.x = -0.2;
+	 
+	 var controls = new THREE.OrbitControls( camera, renderer.domElement );
+	 controls.enableDamping = true;
+	 controls.dampingFactor = 0.25;
+	 controls.enableZoom = true;
+	 //ajouterTrainee2(moonReference);
 
 	 // This is executed for each frames
 	 function render() {
 	     requestAnimationFrame( render );
 
 	     // Animation code goes here
+		 //ajouterTrainee2(moon);
 
 		 // Période de révolution (tour autour du soleil)
 		 mercureReferenceSun.rotation.y += earthYear*4.14;
