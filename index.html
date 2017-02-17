@@ -5,7 +5,7 @@
 	<title>Solar System</title>
 	<style>
 	 body { margin: 0; }
-	 canvas { width: 100vw; height: 100vh }
+	 #mainView { width: 100vw; height: 100vh }
 	 #toolbar { color: white; position: absolute; }
 	 #toolbar a { color: lightgrey; }
 	 #toolbar a:hover { text-decoration: none; }
@@ -35,7 +35,7 @@
 	 document.body.appendChild( renderer.domElement );
 
 	 // Ne fonctionne pas
-	 document.addEventListener("resize", onWindowResize );
+	 document.addEventListener("resize", WindowResize );
 
 	 /*renderer.domElement.addEventListener("wheel", cameraZoom );
 	 renderer.domElement.addEventListener("mousedown", leftClickOnView );
