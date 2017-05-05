@@ -5,7 +5,7 @@
 	<title>Solar System</title>
 	<style>
 	 body { margin: 0; }
-	 #mainView { width: 100vw; height: 100vh }
+	 #mainViewContainer { height: 100%; width: 100%; }
 	 #toolbar { color: white; position: absolute; }
 	 #toolbar a { color: lightgrey; }
 	 #toolbar a:hover { text-decoration: none; }
@@ -16,6 +16,9 @@
 	    <a href="https://threejs.org/docs/index.html#Manual/Introduction/Creating_a_scene">Documentation</a>
 	    <a href="mailto:guillaum.bouchard@gmail.com">guillaum.bouchard@gmail.com</a>
 	</p>
+	<div id="mainViewContainer">
+
+	</div>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.js"></script>
 	<script src="js/FlyControls.js"></script>
 	<script src="js/objects.js"></script>
@@ -25,17 +28,14 @@
 	 // Initialisation of the scene / camera / renderer
 	 var scene = new THREE.Scene();
 	 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-	 
+
 
 
 	 var renderer = new THREE.WebGLRenderer();
 	 renderer.setSize( window.innerWidth, window.innerHeight );
 	 renderer.shadowMap.enabled = true;
 	 renderer.domElement.id = "mainView";
-	 document.body.appendChild( renderer.domElement );
-
-	 // Ne fonctionne pas
-	 document.addEventListener("resize", WindowResize );
+	 document.getElementById("mainViewContainer").appendChild( renderer.domElement );
 
 	 /*renderer.domElement.addEventListener("wheel", cameraZoom );
 	 renderer.domElement.addEventListener("mousedown", leftClickOnView );
@@ -49,53 +49,25 @@
 	 controls.rollSpeed = Math.PI / 24;
 	 controls.autoForward = false;
 	 controls.dragToLook = true;*/
-	 
-	 /*
-	 ######################################################
-	 Normalement faudrait créer les variables globales et la fonction init() devrait les initialiser
-	 Mais ça fonctionne pas donc pour l'instant elles sont créées par la fonction (et elles sont globales là)
 
-	 var solarSystem;
-
- 	 var mercureReferenceSun, venusReferenceSun, earthReferenceSun, earthReference, moonReference, marsReferenceSun;
-	 var jupiterReferenceSun, saturnReferenceSun, saturnReference, uranusReferenceSun, uranusReference, neptuneReferenceSun;
-
- 	 var ball, ring;
-
-	 var textureLoader;
- 	 var starsTexture;
- 	 var sunTexture, mercureTexture, venusTexture, earthTexture, moonTexture, marsTexture ;
- 	 var jupiterTexture, saturnTexture, saturnRingsTexture, uranusTexture, neptuneTexture ;
-
- 	 var starsMaterial;
- 	 var sunMaterial, mercureMaterial, venusMaterial, earthMaterial, moonMaterial, marsMaterial;
- 	 var jupiterMaterial, saturnMaterial, saturnRingsMaterial, uranusMaterial, neptuneMaterial;
-
-
- 	 var light, ambientlight ;
-
- 	 var stars;
- 	 var sun, mercure, venus, earth, moon, mars;
- 	 var jupiter, saturn, saturnRings, uranus, neptune;
-
- 	 var UA, earthYear, earthDay ;*/
 
 	 // Initialisation of your objects / materials / light
 	 init();
-	 
+
 	 var refCamera = new THREE.Object3D();
-	 
+
 	 //moon.add(refCamera);
 	 //refCamera.add(camera);
-	 
+
 	 camera.position.z = 20;
 	 camera.rotation.x = -0.2;
-	 
+
 	 var controls = new THREE.OrbitControls( camera, renderer.domElement );
 	 controls.enableDamping = true;
 	 controls.dampingFactor = 0.25;
 	 controls.enableZoom = true;
-	 //ajouterTrainee2(moonReference);
+
+	 document.addEventListener("resize", function(renderer, camera) { WindowResize(renderer, camera); } );
 
 	 // This is executed for each frames
 	 function render() {

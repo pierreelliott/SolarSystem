@@ -25,22 +25,22 @@ function initObjects() {
 function initTextures() {
 	console.log("Function initTextures");
 
-	starsTexture = new THREE.TextureLoader().load( "stars.jpg" );
+	starsTexture = new THREE.TextureLoader().load( "../src/textures/stars.jpg" );
 	starsTexture.wrapS = THREE.RepeatWrapping;
 	starsTexture.wrapT = THREE.RepeatWrapping;
 	starsTexture.repeat.set( 6, 6 );
 
-	sunTexture = new THREE.TextureLoader().load( "sun.jpg" );
-	mercureTexture = new THREE.TextureLoader().load( "mercure.jpg" );
-	venusTexture = new THREE.TextureLoader().load( "venus.jpg" );
-	earthTexture = new THREE.TextureLoader().load( "earth.jpg" );
-	moonTexture = new THREE.TextureLoader().load( "moon.jpg" );
-	marsTexture = new THREE.TextureLoader().load( "mars.jpg" );
-	jupiterTexture = new THREE.TextureLoader().load( "jupiter.jpg" );
-	saturnTexture = new THREE.TextureLoader().load( "saturn.jpg" );
-	saturnRingsTexture = new THREE.TextureLoader().load( "saturn_rings.png" );
-	uranusTexture = new THREE.TextureLoader().load( "uranus.jpg" );
-	neptuneTexture = new THREE.TextureLoader().load( "neptune.jpg" );
+	sunTexture = new THREE.TextureLoader().load( "../src/textures/sun.jpg" );
+	mercureTexture = new THREE.TextureLoader().load( "../src/textures/mercure.jpg" );
+	venusTexture = new THREE.TextureLoader().load( "../src/textures/venus.jpg" );
+	earthTexture = new THREE.TextureLoader().load( "../src/textures/earth.jpg" );
+	moonTexture = new THREE.TextureLoader().load( "../src/textures/moon.jpg" );
+	marsTexture = new THREE.TextureLoader().load( "../src/textures/mars.jpg" );
+	jupiterTexture = new THREE.TextureLoader().load( "../src/textures/jupiter.jpg" );
+	saturnTexture = new THREE.TextureLoader().load( "../src/textures/saturn.jpg" );
+	saturnRingsTexture = new THREE.TextureLoader().load( "../src/textures/saturn_rings.png" );
+	uranusTexture = new THREE.TextureLoader().load( "../src/textures/uranus.jpg" );
+	neptuneTexture = new THREE.TextureLoader().load( "../src/textures/neptune.jpg" );
 
 	starsMaterial = new THREE.MeshPhongMaterial( { map: starsTexture, side: THREE.DoubleSide } );
 	sunMaterial = new THREE.MeshPhongMaterial( { emissiveMap: sunTexture, emissive: 0xFFFFFF } );
@@ -167,13 +167,13 @@ function ajouterTrainee(reference) {
 	var traineeReference = new THREE.Object3D();
 	var traineeTexture = new THREE.TextureLoader().load( "mercure.jpg" );
 	var traineeMaterial = new THREE.MeshPhongMaterial( { color: 0xF0F0F0 } );
-	
+
 	reference.add(traineeReference);
-	
+
 	for(var i = 0; i < 20; i++) {
 		var trainee = new THREE.Mesh(ball, traineeMaterial);
 		trainee.scale.set(0.2,0.2,0.2);
-		
+
 		traineeReference.add(trainee);
 		trainee.position.z = 2;
 		traineeReference.rotation.z -= 0.01;
@@ -185,16 +185,14 @@ function ajouterTrainee2(reference) {
 	var traineeReference = new THREE.Object3D();
 	var traineeMaterial = new THREE.MeshPhongMaterial( { color: 0xF0F0F0 } );
 	trainee = new THREE.Mesh(ball, traineeMaterial);
-	
+
 	var mat = reference.matrixWorld;
 	p.applyMatrix4(mat);
-	
+
 	reference.add(traineeReference);
 	solarSystem.add(trainee);
 	trainee.scale.set(0.1,0.1,0.1);
-	
+
 	console.log(p);
 	trainee.position.copy(p);
 }
-
-
