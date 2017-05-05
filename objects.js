@@ -17,7 +17,7 @@ function initObjects() {
 	neptuneReferenceSun = new THREE.Object3D();
 
 	ball = new THREE.SphereGeometry(1, 32, 32);
-	ring = new THREE.RingGeometry( 7, 10, 30);
+	ring = new THREE.RingGeometry( 3, 5, 70);
 }
 
 
@@ -145,7 +145,7 @@ function init() {
 	saturnReference.scale.set(1.05,1.05,1.05);
 	saturnReference.add(saturn);
 	saturnReference.add(saturnRings);
-	saturnRings.rotation.x = 3.14/3;
+	saturnRings.rotation.x = 1.4;
 	saturnRings.scale.set(0.4,0.4,0.4);
 
 	uranusReferenceSun.add(uranusReference);
