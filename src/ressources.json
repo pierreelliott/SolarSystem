@@ -1,0 +1,205 @@
+{
+	"solarSystem": {
+		"objects": [
+			{
+				"name": "stars",
+				"texture": "src/textures/stars.jpg",
+				"isEmissive": false,
+				"repeat": [ 6 , 6 ],
+				"material": {
+					"map": "",
+					"side": 2
+				},
+				"mesh": {
+					"position": [ 0, 0, 0 ],
+					"rotation": [ 0, 0, 0 ],
+					"scale": 300
+				},
+				"parentReference": "solarSystem",
+				"parentRotation": 0,
+				"selfRotation": 0
+			},
+			{
+				"name": "sun",
+				"texture": "src/textures/sun.jpg",
+				"isEmissive": true,
+				"repeat": [ 1 , 1 ],
+				"material": {
+					"emissiveMap": "",
+					"emissive": "white",
+					"side": 2
+				},
+				"mesh": {
+					"position": [ 0, 0, 0 ],
+					"rotation": [ 0, 0, 0 ],
+					"scale": 0.5
+				},
+				"parentReference": "solarSystem",
+				"parentRotation": 0,
+				"selfRotation": 27.28
+			},
+			{
+				"name": "mercure",
+				"texture": "src/textures/mercure.jpg",
+				"isEmissive": false,
+				"repeat": [ 1 , 1 ],
+				"material": {
+					"map": "",
+					"side": 0
+				},
+				"mesh": {
+					"position": [ 0.38, 0, 0 ],
+					"rotation": [ 0, 0, 0 ],
+					"scale": 0.1
+				},
+				"parentReference": "solarSystem",
+				"parentRotation": 87.969,
+				"selfRotation": 58.646
+			},
+			{
+				"name": "venus",
+				"texture": "src/textures/venus.jpg",
+				"isEmissive": false,
+				"repeat": [ 1 , 1 ],
+				"material": {
+					"map": "",
+					"side": 0
+				},
+				"mesh": {
+					"position": [ 0.72, 0, 0 ],
+					"rotation": [ 0, 0, 0 ],
+					"scale": 0.29
+				},
+				"parentReference": "solarSystem",
+				"parentRotation": 224.701,
+				"selfRotation": -243.023
+			},
+			{
+				"name": "earth",
+				"texture": "src/textures/earth.jpg",
+				"isEmissive": false,
+				"repeat": [ 1 , 1 ],
+				"material": {
+					"map": "",
+					"side": 0
+				},
+				"mesh": {
+					"position": [ 1, 0, 0 ],
+					"rotation": [ 0, 0, 0.2 ],
+					"scale": 0.3
+				},
+				"parentReference": "solarSystem",
+				"parentRotation": 365.25,
+				"selfRotation": 1
+			},
+			{
+				"name": "moon",
+				"texture": "src/textures/moon.jpg",
+				"isEmissive": false,
+				"repeat": [ 1 , 1 ],
+				"material": {
+					"map": "",
+					"side": 0
+				},
+				"mesh": {
+					"position": [ 0.03, 0, 0 ],
+					"rotation": [ 0, 0, 0 ],
+					"scale": 0.08
+				},
+				"parentReference": "earthReference",
+				"parentRotation": 27.322,
+				"selfRotation": 27.322
+			},
+			{
+				"name": "mars",
+				"texture": "src/textures/mars.jpg",
+				"isEmissive": false,
+				"repeat": [ 1 , 1 ],
+				"material": {
+					"map": "",
+					"side": 0
+				},
+				"mesh": {
+					"position": [ 1.52, 0, 0 ],
+					"rotation": [ 0, 0, 0 ],
+					"scale": 0.16
+				},
+				"parentReference": "solarSystem",
+				"parentRotation": 686.96,
+				"selfRotation": 1.026
+			},
+			{
+				"name": "jupiter",
+				"texture": "src/textures/jupiter.jpg",
+				"isEmissive": false,
+				"repeat": [ 1 , 1 ],
+				"material": {
+					"map": "",
+					"side": 0
+				},
+				"mesh": {
+					"position": [ 5.21, 0, 0 ],
+					"rotation": [ 0, 0, 0 ],
+					"scale": 1.2
+				},
+				"parentReference": "solarSystem",
+				"parentRotation": 4335.35,
+				"selfRotation": 0.414
+			},
+			{
+				"name": "saturn",
+				"texture": "src/textures/saturn.jpg",
+				"isEmissive": false,
+				"repeat": [ 1 , 1 ],
+				"material": {
+					"map": "",
+					"side": 0
+				},
+				"mesh": {
+					"position": [ 9.54, 0, 0 ],
+					"rotation": [ 0, 0, 0 ],
+					"scale": 1.05
+				},
+				"parentReference": "solarSystem",
+				"parentRotation": 10757.74,
+				"selfRotation": 0.448
+			},
+			{
+				"name": "uranus",
+				"texture": "src/textures/uranus.jpg",
+				"isEmissive": false,
+				"repeat": [ 1 , 1 ],
+				"material": {
+					"map": "",
+					"side": 0
+				},
+				"mesh": {
+					"position": [ 19.18, 0, 0 ],
+					"rotation": [ 0, 0, 1.57 ],
+					"scale": 1.2
+				},
+				"parentReference": "solarSystem",
+				"parentRotation": 30687.15,
+				"selfRotation": -0.718
+			},
+			{
+				"name": "neptune",
+				"texture": "src/textures/neptune.jpg",
+				"isEmissive": false,
+				"repeat": [ 1 , 1 ],
+				"material": {
+					"map": "",
+					"side": 0
+				},
+				"mesh": {
+					"position": [ 30.11, 0, 0 ],
+					"rotation": [ 0, 0, 0 ],
+					"scale": 1.2
+				},
+				"parentReference": "solarSystem",
+				"parentRotation": 60224.9,
+				"selfRotation": 0.671
+			}
+		]
+	}
+}

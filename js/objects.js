@@ -24,23 +24,24 @@ function initObjects() {
 
 function initTextures() {
 	console.log("Function initTextures");
+	var loader = new THREE.TextureLoader();
 
-	starsTexture = new THREE.TextureLoader().load( "../src/textures/stars.jpg" );
+	starsTexture = loader.load( "../src/textures/stars.jpg" );
 	starsTexture.wrapS = THREE.RepeatWrapping;
 	starsTexture.wrapT = THREE.RepeatWrapping;
 	starsTexture.repeat.set( 6, 6 );
 
-	sunTexture = new THREE.TextureLoader().load( "../src/textures/sun.jpg" );
-	mercureTexture = new THREE.TextureLoader().load( "../src/textures/mercure.jpg" );
-	venusTexture = new THREE.TextureLoader().load( "../src/textures/venus.jpg" );
-	earthTexture = new THREE.TextureLoader().load( "../src/textures/earth.jpg" );
-	moonTexture = new THREE.TextureLoader().load( "../src/textures/moon.jpg" );
-	marsTexture = new THREE.TextureLoader().load( "../src/textures/mars.jpg" );
-	jupiterTexture = new THREE.TextureLoader().load( "../src/textures/jupiter.jpg" );
-	saturnTexture = new THREE.TextureLoader().load( "../src/textures/saturn.jpg" );
-	saturnRingsTexture = new THREE.TextureLoader().load( "../src/textures/saturn_rings.png" );
-	uranusTexture = new THREE.TextureLoader().load( "../src/textures/uranus.jpg" );
-	neptuneTexture = new THREE.TextureLoader().load( "../src/textures/neptune.jpg" );
+	sunTexture = loader.load( "../src/textures/sun.jpg" );
+	mercureTexture = loader.load( "../src/textures/mercure.jpg" );
+	venusTexture = loader.load( "../src/textures/venus.jpg" );
+	earthTexture = loader.load( "../src/textures/earth.jpg" );
+	moonTexture = loader.load( "../src/textures/moon.jpg" );
+	marsTexture = loader.load( "../src/textures/mars.jpg" );
+	jupiterTexture = loader.load( "../src/textures/jupiter.jpg" );
+	saturnTexture = loader.load( "../src/textures/saturn.jpg" );
+	saturnRingsTexture = loader.load( "../src/textures/saturn_rings.png" );
+	uranusTexture = loader.load( "../src/textures/uranus.jpg" );
+	neptuneTexture = loader.load( "../src/textures/neptune.jpg" );
 
 	starsMaterial = new THREE.MeshPhongMaterial( { map: starsTexture, side: THREE.DoubleSide } );
 	sunMaterial = new THREE.MeshPhongMaterial( { emissiveMap: sunTexture, emissive: 0xFFFFFF } );

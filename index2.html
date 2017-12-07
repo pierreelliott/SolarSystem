@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<meta charset="utf-8">
+		<title>Solar System</title>
+		<link rel="stylesheet" type="text/css" href="css/master.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    </head>
+    <body>
+	<div id="mainViewContainer">
+
+	</div>
+	<a id="downloadAnchorElem" style="display:none"></a>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.js"></script>
+	<script src="js/FlyControls.js"></script>
+	<script src="js/objects.js"></script>
+	<script src="js/viewFunctions.js"></script>
+	<script src="js/OrbitControls.js"></script>
+	<script type="text/javascript">
+		function save() {
+			var dlAnchorElem = document.getElementById("downloadAnchorElem");
+			var uri = 'data:text/json;charset=utf8,' + encodeURIComponent(JSON.stringify(scene.toJSON()));
+			dlAnchorElem.setAttribute("href",     uri     );
+			dlAnchorElem.setAttribute("download", "solarSystem.json");
+			dlAnchorElem.click();
+		}
+	</script>
+	<script>
+	 // Initialisation of the scene / camera / renderer
+	 scene = new THREE.Scene();
+	 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+
+
+	 var renderer = new THREE.WebGLRenderer();
+	 renderer.setSize( window.innerWidth, window.innerHeight );
+	 renderer.shadowMap.enabled = true;
+	 renderer.domElement.id = "mainView";
+	 document.getElementById("mainViewContainer").appendChild( renderer.domElement );
+
+	 /*renderer.domElement.addEventListener("wheel", cameraZoom );
+	 renderer.domElement.addEventListener("mousedown", leftClickOnView );
+	 renderer.domElement.addEventListener("touchstart", leftClickOnView );*/
+
+	 var clock = new THREE.Clock();
+	 var delta = clock.getDelta();
+	 /*var controls = new THREE.FlyControls( camera );
+	 controls.movementSpeed = 10000;
+	 controls.domElement = renderer.domElement;
+	 controls.rollSpeed = Math.PI / 24;
+	 controls.autoForward = false;
+	 controls.dragToLook = true;*/
+
+
+	 // Initialisation of your objects / materials / light
+	 init();
+
+	 var refCamera = new THREE.Object3D();
+
+	 //moon.add(refCamera);
+	 //refCamera.add(camera);
+
+	 camera.position.z = 20;
+	 camera.rotation.x = -0.2;
+
+	 var controls = new THREE.OrbitControls( camera, renderer.domElement );
+	 controls.enableDamping = true;
+	 controls.dampingFactor = 0.25;
+	 controls.enableZoom = true;
+
+	 document.addEventListener("resize", function(renderer, camera) { WindowResize(renderer, camera); } );
+
+	 // This is executed for each frames
+	 function render() {
+	     requestAnimationFrame( render );
+
+	     // Animation code goes here
+		 //ajouterTrainee2(moon);
+
+		 // Période de révolution (tour autour du soleil)
+		 mercureReferenceSun.rotation.y += earthYear*4.14;
+		 venusReferenceSun.rotation.y += earthYear*1.62;
+	     earthReferenceSun.rotation.y += earthYear;
+		 moonReference.rotation.y += earthYear*13;
+		 marsReferenceSun.rotation.y += earthYear/1.8;
+		 jupiterReferenceSun.rotation.y += earthYear/12;
+		 saturnReferenceSun.rotation.y += earthYear/29;
+		 uranusReferenceSun.rotation.y += earthYear/84;
+		 neptuneReferenceSun.rotation.y += earthYear/164;
+
+		 // Période de rotation (tour sur soi-même)
+		 sun.rotation.y += earthDay/26;
+		 mercure.rotation.y += earthDay/59;
+		 venus.rotation.y += -earthDay/243;
+		 earth.rotation.y += earthDay;
+		 mars.rotation.y += earthDay/0.975;
+		 jupiter.rotation.y += earthDay*2.6;
+		 saturn.rotation.y += earthDay*2.4;
+		 //saturnRings.rotation.z += earthDay/2.6;
+		 uranus.rotation.y += earthDay*1.7;
+		 neptune.rotation.y += earthDay*1.5;
+
+		 controls.update( delta );
+	     renderer.render( scene, camera );
+	 }
+
+	 render();
+	</script>
+    </body>
+</html>

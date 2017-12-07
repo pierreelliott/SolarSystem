@@ -1,9 +1,8 @@
 function resize(renderer, camera) {
 	console.log("resizing");
-	var container = document.getElementById("mainViewContainer");
-	renderer.setSize( container.getBoundingClientRect().width, container.getBoundingClientRect().height );
-	camera.aspect = container.getBoundingClientRect().width / container.getBoundingClientRect().height;
+	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
+	renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
 function cameraZoom(e) {
