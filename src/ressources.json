@@ -1,0 +1,52 @@
+{
+	"textures": [
+		{
+			"name": "stars",
+			"src": "src/textures/stars.jpg"
+		},
+		{
+			"name": "sun",
+			"src": "src/textures/sun.jpg"
+		},
+		{
+			"name": "mercury",
+			"src": "src/textures/mercury.jpg"
+		},
+		{
+			"name": "venus",
+			"src": "src/textures/venus.jpg"
+		},
+		{
+			"name": "earth",
+			"src": "src/textures/earth.jpg"
+		},
+		{
+			"name": "moon",
+			"src": "src/textures/moon.jpg"
+		},
+		{
+			"name": "mars",
+			"src": "src/textures/mars.jpg"
+		},
+		{
+			"name": "jupiter",
+			"src": "src/textures/jupiter.jpg"
+		},
+		{
+			"name": "saturn",
+			"src": "src/textures/saturn.jpg"
+		},
+		{
+			"name": "saturn_rings",
+			"src": "src/textures/saturn_rings.png"
+		},
+		{
+			"name": "uranus",
+			"src": "src/textures/uranus.jpg"
+		},
+		{
+			"name": "neptune",
+			"src": "src/textures/neptune.jpg"
+		}
+	]
+}

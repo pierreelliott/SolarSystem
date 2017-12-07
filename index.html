@@ -1,24 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-	<meta charset="utf-8">
-	<title>Solar System</title>
-	<style>
-	 body { margin: 0; }
-	 #mainViewContainer { height: 100%; width: 100%; }
-	 #toolbar { color: white; position: absolute; }
-	 #toolbar a { color: lightgrey; }
-	 #toolbar a:hover { text-decoration: none; }
-	</style>
+		<meta charset="utf-8">
+		<title>Solar System</title>
+		<link rel="stylesheet" type="text/css" href="css/master.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     </head>
     <body>
-		<!--
-	<p id="toolbar">
-	    <a href="https://threejs.org/docs/index.html#Manual/Introduction/Creating_a_scene">Documentation</a>
-	    <a href="mailto:guillaum.bouchard@gmail.com">guillaum.bouchard@gmail.com</a>
-	</p> -->
 	<div id="mainViewContainer">
 
+	</div>
+	<div hidden>
+		<img id="stars" src="src/textures/stars.jpg" alt="Texture">
+		<img id="sun" src="src/textures/sun.jpg" alt="Texture">
+		<img id="mercury" src="src/textures/mercury.jpg" alt="Texture">
+		<img id="venus" src="src/textures/venus.jpg" alt="Texture">
+		<img id="earth" src="src/textures/earth.jpg" alt="Texture">
+		<img id="moon" src="src/textures/moon.jpg" alt="Texture">
+		<img id="mars" src="src/textures/mars.jpg" alt="Texture">
+		<img id="jupiter" src="src/textures/jupiter.jpg" alt="Texture">
+		<img id="saturn" src="src/textures/saturn.jpg" alt="Texture">
+		<img id="saturn_rings" src="src/textures/saturn_rings.jpg" alt="Texture">
+		<img id="uranus" src="src/textures/uranus.jpg" alt="Texture">
+		<img id="neptune" src="src/textures/neptune.jpg" alt="Texture">
 	</div>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.js"></script>
 	<script src="js/FlyControls.js"></script>
