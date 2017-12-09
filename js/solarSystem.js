@@ -1,3 +1,91 @@
+class CelestialBody {
+	constructor() {
+		this.mesh = "";
+		this.reference = new THREE.Object3D();
+		this.gravityReference = new THREE.Object3D();
+		this.parentReference = new THREE.Object3D();
+		this.name = "";
+		
+		this.reference.add(this.gravityReference);
+		this.parentReference.add(this.reference);
+	}
+}
+
+class Planet extends CelestialBody {
+	constructor(file, texture, map) {
+		super();
+		
+		this.name = file.name;
+		map.set(this.name, this.reference);
+		
+		file.material.map = texture;
+		var material = new THREE.MeshPhongMaterial( file.material );
+		var ball = new THREE.SphereGeometry(1, 32, 32);
+		this.mesh = new THREE.Mesh(ball, material);
+		
+		this.reference.add(this.mesh);
+		var centerOfGravity = map.get(file.parentReference);
+		centerOfGravity.add(this.parentReference);
+
+		this.reference.position.fromArray(file.reference.position);
+		//this.reference.position.multiplyScalar(uniteAstronomique);
+		// Il faudra penser à refléter l'absence de ce scalaire en changeant la valeur du vecteur de position
+
+		this.mesh.scale.setScalar(file.mesh.scale);
+		this.mesh.rotation.fromArray(file.mesh.rotation);
+	}
+}
+
+class Star extends CelestialBody {
+	constructor(file, texture, map) {
+		super();
+		
+		this.name = file.name;
+		map.set(this.name, this.reference);
+		
+		file.material.emissiveMap = texture;
+		var material = new THREE.MeshPhongMaterial( file.material );
+		var ball = new THREE.SphereGeometry(1, 32, 32);
+		this.mesh = new THREE.Mesh(ball, material);
+		
+		this.reference.add(this.mesh);
+		var centerOfGravity = map.get(file.parentReference);
+		centerOfGravity.add(this.parentReference);
+
+		this.reference.position.fromArray(file.reference.position);
+		//this.reference.position.multiplyScalar(uniteAstronomique);
+		// Il faudra penser à refléter l'absence de ce scalaire en changeant la valeur du vecteur de position
+
+		this.mesh.scale.setScalar(file.mesh.scale);
+		this.mesh.rotation.fromArray(file.mesh.rotation);
+	}
+}
+
+// How the file should be
+var file = {
+	name: "...",
+	texture: "...",
+	material: {
+		
+	},
+	mesh: {
+		size: {
+			// Taille du meshe
+		},
+		rotation: {
+			
+		}
+	},
+	reference: {
+		position: {
+			// Position par rapport à l'élément parent
+		}
+	},
+	parentReference: {
+		
+	}
+}
+
 window.onload = function() {
 	console.log("hello");
 	var container, stats;
