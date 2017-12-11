@@ -47,12 +47,13 @@
 			file.material.map = texture;
 			var material = new THREE.MeshPhongMaterial( file.material );
 			var ball = new THREE.SphereGeometry(1, 32, 32);
-			this.mesh = new THREE.Mesh(ball, material);
+			var mesh = new THREE.Mesh(ball, material);
 
-			this.mesh.scale.setScalar(file.mesh.scale);
-			this.mesh.rotation.fromArray(file.mesh.rotation);
+			mesh.scale.setScalar(file.mesh.scale);
+			//mesh.scale.multiplyScalar(0.001*uniteAstronomique);
+			mesh.rotation.fromArray(file.mesh.rotation);
 
-			this.reference.add(this.mesh);
+			this.reference.add(mesh);
 		}
 	}
 
@@ -69,6 +70,7 @@
 			// Il faudra penser à refléter l'absence de ce scalaire en changeant la valeur du vecteur de position
 
 			mesh.scale.setScalar(file.mesh.scale);
+			mesh.scale.multiplyScalar(0.1*uniteAstronomique);
 			mesh.rotation.fromArray(file.mesh.rotation);
 
 			this.reference.add(mesh);
@@ -88,18 +90,16 @@
 			// Il faudra penser à refléter l'absence de ce scalaire en changeant la valeur du vecteur de position
 
 			mesh.scale.setScalar(file.mesh.scale);
+			mesh.scale.multiplyScalar(0.1*uniteAstronomique);
 			mesh.rotation.fromArray(file.mesh.rotation);
 
 			this.reference.add(mesh);
 		}
 	}
 
-
-var camera, scene, renderer, celestialBodies;
-
 window.onload = function() {
 	var container, stats;
-	//var camera, scene, renderer;
+	var camera, scene, renderer;
 	var clock, controls, delta;
 	celestialBodies = new Map();
 
@@ -108,7 +108,7 @@ window.onload = function() {
 	var objectsReferenceOnParentMap = new Map();
 
 	earthDay = 0.5;
-	uniteAstronomique = 5;
+	uniteAstronomique = 10;
 
 	init();
 
@@ -257,9 +257,7 @@ window.onload = function() {
 		var loader = new THREE.TextureLoader();
 
 		var loadManagerVar = new LoadManager(objects.length,function() {
-			console.log(scene);
-			console.log(celestialBodies);
-			animate();
+			randomizePosition();
 		});
 
 		objects.forEach( function (e) {
@@ -287,6 +285,19 @@ window.onload = function() {
 		if(this.numberObjectsCreated >= this.max) {
 			this.callback();
 		}
+	}
+
+	function randomizePosition() {
+		var rand;
+		celestialBodies.forEach( function (obj, name) {
+			rand = Math.round(Math.random()*1000000);
+			console.log("Rand : " + rand);
+			for(var i; i < rand; i++) {
+				obj.rotate();
+			}
+		});
+
+		animate();
 	}
 
 	function animate() {

@@ -9,14 +9,14 @@
 				"repeat": [ 6 , 6 ],
 				"material": {
 					"map": "",
-					"side": 2
+					"side": 1
 				},
 				"reference": {
 					"position": [ 0, 0, 0 ]
 				},
 				"mesh": {
 					"rotation": [ 0, 0, 0 ],
-					"scale": 600
+					"scale": 300
 				},
 				"parentReference": "",
 				"orbitalRotation": 0,
@@ -31,14 +31,14 @@
 				"material": {
 					"emissiveMap": "",
 					"emissive": "white",
-					"side": 2
+					"side": 0
 				},
 				"reference": {
 					"position": [ 0, 0, 0 ]
 				},
 				"mesh": {
 					"rotation": [ 0, 0, 0 ],
-					"scale": 1
+					"scale": 2
 				},
 				"parentReference": "",
 				"orbitalRotation": 0,
@@ -226,11 +226,11 @@
 					"side": 0
 				},
 				"reference": {
-						"position": [ 0.03, 0, 0 ]
+						"position": [ 0.08, 0, 0 ]
 				},
 				"mesh": {
 					"rotation": [ 0, 0, 0 ],
-					"scale": 0.08
+					"scale": 0.06
 				},
 				"parentReference": "earth",
 				"orbitalRotation": 27.322,
