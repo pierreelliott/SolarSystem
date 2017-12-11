@@ -1,79 +1,98 @@
-class CelestialBody {
-	constructor() {
-		this.mesh = "";
-		this.reference = new THREE.Object3D();
-		this.gravityReference = new THREE.Object3D();
-		this.parentReference = new THREE.Object3D();
-		this.name = "";
-		
-		this.reference.add(this.gravityReference);
-		this.parentReference.add(this.reference);
+
+	class CelestialBody {
+		constructor(file, parentReference, type) {
+			this.centerOfGravity = new THREE.Object3D();
+			this.positionInSpace = new THREE.Object3D();
+			this.reference = new THREE.Object3D();
+			this.name = file.name;
+			this.orbitalRotation = file.orbitalRotation; // Rotation around its parent
+			this.siderealRotation = file.siderealRotation; // Rotation on itself
+			this.mass = file.mass;
+			this.type = type;
+
+			parentReference.add(this.centerOfGravity);
+			this.centerOfGravity.add(this.positionInSpace);
+			this.positionInSpace.position.fromArray(file.reference.position); // Unité en UA
+			this.positionInSpace.position.multiplyScalar(uniteAstronomique);
+			this.positionInSpace.add(this.reference);
+		}
+		rotate() {
+			this.centerOfGravity.rotation.y += earthDay/this.orbitalRotation;
+			this.reference.rotation.y += earthDay/this.siderealRotation;
+		}
+		getType() { return this.type; }
+		getReference() { return this.positionInSpace; }
 	}
-}
 
-class Planet extends CelestialBody {
-	constructor(file, texture, map) {
-		super();
-		
-		this.name = file.name;
-		map.set(this.name, this.reference);
-		
-		file.material.map = texture;
-		var material = new THREE.MeshPhongMaterial( file.material );
-		var ball = new THREE.SphereGeometry(1, 32, 32);
-		this.mesh = new THREE.Mesh(ball, material);
-		
-		this.reference.add(this.mesh);
-		var centerOfGravity = map.get(file.parentReference);
-		centerOfGravity.add(this.parentReference);
+	class Star extends CelestialBody {
+		constructor(file, texture, parentReference) {
+			super(file, parentReference, "Star");
 
-		this.reference.position.fromArray(file.reference.position);
-		//this.reference.position.multiplyScalar(uniteAstronomique);
-		// Il faudra penser à refléter l'absence de ce scalaire en changeant la valeur du vecteur de position
+			file.material.emissiveMap = texture;
+			file.material.map = texture;
+			var material = new THREE.MeshPhongMaterial( file.material );
+			var ball = new THREE.SphereGeometry(1, 32, 32);
+			this.mesh = new THREE.Mesh(ball, material);
 
-		this.mesh.scale.setScalar(file.mesh.scale);
-		this.mesh.rotation.fromArray(file.mesh.rotation);
+			this.mesh.scale.setScalar(file.mesh.scale);
+			this.mesh.rotation.fromArray(file.mesh.rotation);
+
+			this.reference.add(this.mesh);
+		}
 	}
-}
 
-class Star extends CelestialBody {
-	constructor(file, texture, map) {
-		super();
-		
-		this.name = file.name;
-		map.set(this.name, this.reference);
-		
-		file.material.emissiveMap = texture;
-		var material = new THREE.MeshPhongMaterial( file.material );
-		var ball = new THREE.SphereGeometry(1, 32, 32);
-		this.mesh = new THREE.Mesh(ball, material);
-		
-		this.reference.add(this.mesh);
-		var centerOfGravity = map.get(file.parentReference);
-		centerOfGravity.add(this.parentReference);
+	class Planet extends CelestialBody {
+		constructor(file, texture, parentReference) {
+			super(file, parentReference, "Planet");
 
-		this.reference.position.fromArray(file.reference.position);
-		//this.reference.position.multiplyScalar(uniteAstronomique);
-		// Il faudra penser à refléter l'absence de ce scalaire en changeant la valeur du vecteur de position
+			file.material.map = texture;
+			var material = new THREE.MeshPhongMaterial( file.material );
+			var ball = new THREE.SphereGeometry(1, 32, 32);
+			var mesh = new THREE.Mesh(ball, material);
 
-		this.mesh.scale.setScalar(file.mesh.scale);
-		this.mesh.rotation.fromArray(file.mesh.rotation);
+			//this.reference.position.multiplyScalar(uniteAstronomique);
+			// Il faudra penser à refléter l'absence de ce scalaire en changeant la valeur du vecteur de position
+
+			mesh.scale.setScalar(file.mesh.scale);
+			mesh.rotation.fromArray(file.mesh.rotation);
+
+			this.reference.add(mesh);
+		}
 	}
-}
+
+	class Satellite extends CelestialBody {
+		constructor(file, texture, parentReference) {
+			super(file, parentReference, "Satellite");
+
+			file.material.map = texture;
+			var material = new THREE.MeshPhongMaterial( file.material );
+			var ball = new THREE.SphereGeometry(1, 32, 32);
+			var mesh = new THREE.Mesh(ball, material);
+
+			//this.reference.position.multiplyScalar(uniteAstronomique);
+			// Il faudra penser à refléter l'absence de ce scalaire en changeant la valeur du vecteur de position
+
+			mesh.scale.setScalar(file.mesh.scale);
+			mesh.rotation.fromArray(file.mesh.rotation);
+
+			this.reference.add(mesh);
+		}
+	}
+
 
 // How the file should be
 var file = {
 	name: "...",
 	texture: "...",
 	material: {
-		
+
 	},
 	mesh: {
 		size: {
 			// Taille du meshe
 		},
 		rotation: {
-			
+
 		}
 	},
 	reference: {
@@ -82,21 +101,22 @@ var file = {
 		}
 	},
 	parentReference: {
-		
+
 	}
 }
 
 window.onload = function() {
-	console.log("hello");
 	var container, stats;
 	var camera, scene, renderer;
 	var clock, controls, delta;
+	var celestialBodies = new Map();
+
 	var objectsMap = new Map();
 	var objectsReferenceMap = new Map();
 	var objectsReferenceOnParentMap = new Map();
 
-	var earthDay = 0.5;
-	var uniteAstronomique = 5;
+	earthDay = 0.5;
+	uniteAstronomique = 5;
 
 	init();
 
@@ -125,7 +145,7 @@ window.onload = function() {
 		scene.add(light);
 		scene.add(ambientlight);;
 
-		ajax("src/ressources.json", solarSystemInitialization )
+		ajax("src/ressources.json", intializeStars )
 	}
 
 	function ajax(data_url, callback) {
@@ -139,24 +159,12 @@ window.onload = function() {
 	}
 
 	function solarSystemInitialization(jsonFile) {
-		var objects = jsonFile.solarSystem.objects;
+		var objects = jsonFile.solarSystem.stars;
 		var loader = new THREE.TextureLoader();
-		var numberObjectsCreated = 0;
 
-		var solarSystem = new THREE.Object3D();
-		scene.add(solarSystem);
-		objectsReferenceMap.set("solarSystem", { o: solarSystem });
+		//var ring = new THREE.RingGeometry( 3, 5, 50);
 
-		var ball = new THREE.SphereGeometry(1, 32, 32);
-		var ring = new THREE.RingGeometry( 3, 5, 50);
-
-		objects.forEach( function (e) {
-			objectsReferenceMap.set(e.name+"Reference", { o: new THREE.Object3D() });
-			objectsReferenceOnParentMap.set(e.name+"ReferenceOnParent",  { o: new THREE.Object3D(), rotation: e.parentRotation });
-		});
-		console.log("references created");
-
-		var loadManagerVar = new LoadManager(objects.length);
+		var loadManagerVar = new LoadManager(objects.length,);
 
 		objects.forEach( function (e) {
 			loader.load(
@@ -206,24 +214,89 @@ window.onload = function() {
 		});
 	}
 
-	function LoadManager(count) {
+	function intializeStars(jsonFile) {
+		var objects = jsonFile.solarSystem.stars;
+		var loader = new THREE.TextureLoader();
+
+		var loadManagerVar = new LoadManager(objects.length,function() {
+			initializePlanets(jsonFile);
+		});
+
+		objects.forEach( function (e) {
+			loader.load(
+				e.texture,
+				function (texture) {
+					var ob = new Star(e, texture, scene);
+					celestialBodies.set(e.name, ob);
+
+					loadManagerVar.finished();
+				}
+			);
+		});
+	}
+
+	function initializePlanets(jsonFile) {
+		var objects = jsonFile.solarSystem.planets;
+		var loader = new THREE.TextureLoader();
+
+		var loadManagerVar = new LoadManager(objects.length,function() {
+			initializeSatellites(jsonFile);
+		});
+
+		objects.forEach( function (e) {
+			loader.load(
+				e.texture,
+				function (texture) {
+					var parentRef = celestialBodies.get(e.parentReference).getReference();
+					var ob = new Planet(e, texture, parentRef);
+					celestialBodies.set(e.name, ob);
+
+					loadManagerVar.finished();
+				}
+			);
+		});
+	}
+
+	function initializeSatellites(jsonFile) {
+		var objects = jsonFile.solarSystem.satellites;
+		var loader = new THREE.TextureLoader();
+
+		var loadManagerVar = new LoadManager(objects.length,function() {
+			console.log(scene);
+			animate();
+		});
+
+		objects.forEach( function (e) {
+			loader.load(
+				e.texture,
+				function (texture) {
+					var parentRef = celestialBodies.get(e.parentReference).getReference();
+					var ob = new Satellite(e, texture, parentRef);
+					celestialBodies.set(e.name, ob);
+
+					loadManagerVar.finished();
+				}
+			);
+		});
+	}
+
+	function LoadManager(count, callback) {
 		this.numberObjectsCreated = 0;
 		this.max = count;
+		this.callback = callback;
 	}
-	LoadManager.prototype.inc = function () {
+	LoadManager.prototype.finished = function () {
 		this.numberObjectsCreated++;
-		console.log(this.numberObjectsCreated+" objets créés");
+		//console.log(this.numberObjectsCreated+" objets créés");
 		if(this.numberObjectsCreated >= this.max) {
-			console.log(objectsMap.get("sun"));
-			animate();
+			this.callback();
 		}
 	}
 
 	function animate() {
 		requestAnimationFrame( animate );
 
-		gravitateAroundParent();
-		rotate();
+		rotateCelestialBodies();
 
 		controls.update( delta );
 		renderer.render( scene, camera );
@@ -235,45 +308,9 @@ window.onload = function() {
 		renderer.setSize( window.innerWidth, window.innerHeight );
 	};
 
-	function getRefsOnParent() {
-		var array = [];
-		objectsReferenceOnParentMap.forEach( function (val, key) {
-			if(key.match(/.+ReferenceOnParent$/)) {
-				array.push(key);
-			}
-		});
-		return array;
-	}
-	function getCelestialBodies() {
-		var array = [];
-		objectsMap.forEach( function (val, key) {
-			if(!key.match(/Reference/)) {
-				array.push(key);
-			}
-		});
-		return array;
-	}
-
-	function gravitateAroundParent() {
-		var refsOnParentArray = getRefsOnParent();
-		// == tous ceux qui sont appelés "[...]ReferenceSun"
-		refsOnParentArray.forEach( function (e) {
-			var obj = objectsReferenceOnParentMap.get(e);
-			var mesh = obj.o;
-			var r = obj.rotation;
-			mesh.rotation.y += earthDay/r;
-		});
-	}
-
-	function rotate() {
-		var celestialBodies = getCelestialBodies();
-		// == tous ceux qui ne sont pas appelés "[...]Reference[...]"
-
-		celestialBodies.forEach( function (e) {
-			var obj = objectsMap.get(e);
-			var mesh = obj.o;
-			var r = obj.rotation;
-			mesh.rotation.y += earthDay/r;
+	function rotateCelestialBodies() {
+		celestialBodies.forEach( function (obj, name) {
+			//obj.rotate();
 		});
 	}
 }
