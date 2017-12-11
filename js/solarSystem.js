@@ -1,3 +1,9 @@
+/**
+ * @author Pierre-Elliott Thiboud / http://pierreelliott.github.io/
+ *
+ * Copyright (c) 2017 Pierre-Elliott Thiboud
+ * All rights reserved
+ */
 
 	class CelestialBody {
 		constructor(file, parentReference, type) {
@@ -15,10 +21,13 @@
 			this.positionInSpace.position.fromArray(file.reference.position); // Unité en UA
 			this.positionInSpace.position.multiplyScalar(uniteAstronomique);
 			this.positionInSpace.add(this.reference);
+
+			this.numberOfRotation = 0;
 		}
 		rotate() {
 			this.centerOfGravity.rotation.y += earthDay/this.orbitalRotation;
-			this.reference.rotation.y += earthDay/this.siderealRotation;
+			//this.reference.rotation.y += earthDay/this.siderealRotation;
+			this.numberOfRotation++;
 		}
 		getType() { return this.type; }
 		getReference() { return this.positionInSpace; }
@@ -80,36 +89,13 @@
 	}
 
 
-// How the file should be
-var file = {
-	name: "...",
-	texture: "...",
-	material: {
-
-	},
-	mesh: {
-		size: {
-			// Taille du meshe
-		},
-		rotation: {
-
-		}
-	},
-	reference: {
-		position: {
-			// Position par rapport à l'élément parent
-		}
-	},
-	parentReference: {
-
-	}
-}
+var camera, scene, renderer, celestialBodies;
 
 window.onload = function() {
 	var container, stats;
-	var camera, scene, renderer;
+	//var camera, scene, renderer;
 	var clock, controls, delta;
-	var celestialBodies = new Map();
+	celestialBodies = new Map();
 
 	var objectsMap = new Map();
 	var objectsReferenceMap = new Map();
@@ -128,10 +114,13 @@ window.onload = function() {
 		renderer = new THREE.WebGLRenderer();
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		renderer.shadowMap.enabled = true;
+		renderer.setClearColor(new THREE.Color(0xEE2299, 1.0)); // To see from where the error is coming
 		document.body.appendChild( renderer.domElement );
 
 		clock = new THREE.Clock();
 		delta = clock.getDelta();
+		console.log("Delta : ");
+		console.log(delta);
 		camera.position.z = 20;
 		camera.rotation.x = -0.2;
 
@@ -263,6 +252,7 @@ window.onload = function() {
 
 		var loadManagerVar = new LoadManager(objects.length,function() {
 			console.log(scene);
+			console.log(celestialBodies);
 			animate();
 		});
 
@@ -296,10 +286,19 @@ window.onload = function() {
 	function animate() {
 		requestAnimationFrame( animate );
 
-		rotateCelestialBodies();
+		celestialBodies.forEach( function (obj, name) {
+			//obj.rotate();
+		});
 
+		delta = clock.getDelta();
 		controls.update( delta );
 		renderer.render( scene, camera );
+	}
+
+	function rotateCelestialBodies() {
+		celestialBodies.forEach( function (obj, name) {
+			//obj.rotate();
+		});
 	}
 
 	window.onresize = function () {
@@ -307,10 +306,4 @@ window.onload = function() {
 		camera.updateProjectionMatrix();
 		renderer.setSize( window.innerWidth, window.innerHeight );
 	};
-
-	function rotateCelestialBodies() {
-		celestialBodies.forEach( function (obj, name) {
-			//obj.rotate();
-		});
-	}
 }
