@@ -20,14 +20,20 @@
 			this.centerOfGravity.add(this.positionInSpace);
 			this.positionInSpace.position.fromArray(file.reference.position); // Unité en UA
 			this.positionInSpace.position.multiplyScalar(uniteAstronomique);
+			this.positionInSpace.name = file.name + "Position";
 			this.positionInSpace.add(this.reference);
 
 			this.numberOfRotation = 0;
 		}
 		rotate() {
-			this.centerOfGravity.rotation.y += earthDay/this.orbitalRotation;
-			//this.reference.rotation.y += earthDay/this.siderealRotation;
+			this.centerOfGravity.rotation.y += getRotationAngle(this.orbitalRotation);
+			this.reference.rotation.y += getRotationAngle(this.siderealRotation);
 			this.numberOfRotation++;
+
+			function getRotationAngle(r) {
+				if(r == 0) { return 0; }
+				else { return earthDay/r; }
+			}
 		}
 		getType() { return this.type; }
 		getReference() { return this.positionInSpace; }
@@ -287,18 +293,12 @@ window.onload = function() {
 		requestAnimationFrame( animate );
 
 		celestialBodies.forEach( function (obj, name) {
-			//obj.rotate();
+			obj.rotate();
 		});
 
 		delta = clock.getDelta();
 		controls.update( delta );
 		renderer.render( scene, camera );
-	}
-
-	function rotateCelestialBodies() {
-		celestialBodies.forEach( function (obj, name) {
-			//obj.rotate();
-		});
 	}
 
 	window.onresize = function () {

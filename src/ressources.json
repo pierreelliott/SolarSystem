@@ -38,7 +38,7 @@
 				},
 				"mesh": {
 					"rotation": [ 0, 0, 0 ],
-					"scale": 0.5
+					"scale": 1
 				},
 				"parentReference": "",
 				"orbitalRotation": 0,
