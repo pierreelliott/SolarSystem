@@ -1,27 +1,31 @@
 {
 	"solarSystem": {
-		"objects": [
+		"stars": [
 			{
 				"name": "stars",
 				"texture": "src/textures/stars.jpg",
-				"isEmissive": false,
+				"mass": 0,
+
 				"repeat": [ 6 , 6 ],
 				"material": {
 					"map": "",
 					"side": 2
 				},
-				"mesh": {
-					"position": [ 0, 0, 0 ],
-					"rotation": [ 0, 0, 0 ],
-					"scale": 300
+				"reference": {
+					"position": [ 0, 0, 0 ]
 				},
-				"parentReference": "solarSystem",
-				"parentRotation": 0,
-				"selfRotation": 0
+				"mesh": {
+					"rotation": [ 0, 0, 0 ],
+					"scale": 600
+				},
+				"parentReference": "",
+				"orbitalRotation": 0,
+				"siderealRotation": 0
 			},
 			{
 				"name": "sun",
 				"texture": "src/textures/sun.jpg",
+				"mass": 0,
 				"isEmissive": true,
 				"repeat": [ 1 , 1 ],
 				"material": {
@@ -29,176 +33,208 @@
 					"emissive": "white",
 					"side": 2
 				},
-				"mesh": {
-					"position": [ 0, 0, 0 ],
-					"rotation": [ 0, 0, 0 ],
-					"scale": 0.5
+				"reference": {
+					"position": [ 0, 0, 0 ]
 				},
-				"parentReference": "solarSystem",
-				"parentRotation": 0,
-				"selfRotation": 27.28
-			},
+				"mesh": {
+					"rotation": [ 0, 0, 0 ],
+					"scale": 1
+				},
+				"parentReference": "",
+				"orbitalRotation": 0,
+				"siderealRotation": 27.28
+			}
+		],
+		"planets": [
 			{
-				"name": "mercure",
+				"name": "mercury",
 				"texture": "src/textures/mercure.jpg",
-				"isEmissive": false,
+				"mass": 0,
+
 				"repeat": [ 1 , 1 ],
 				"material": {
 					"map": "",
 					"side": 0
 				},
+				"reference": {
+					"position": [ 0.38, 0, 0 ]
+				},
 				"mesh": {
-					"position": [ 0.38, 0, 0 ],
 					"rotation": [ 0, 0, 0 ],
 					"scale": 0.1
 				},
-				"parentReference": "solarSystem",
-				"parentRotation": 87.969,
-				"selfRotation": 58.646
+				"parentReference": "sun",
+				"orbitalRotation": 87.969,
+				"siderealRotation": 58.646
 			},
 			{
 				"name": "venus",
 				"texture": "src/textures/venus.jpg",
-				"isEmissive": false,
+				"mass": 0,
+
 				"repeat": [ 1 , 1 ],
 				"material": {
 					"map": "",
 					"side": 0
 				},
+				"reference": {
+					"position": [ 0.72, 0, 0 ]
+				},
 				"mesh": {
-					"position": [ 0.72, 0, 0 ],
 					"rotation": [ 0, 0, 0 ],
 					"scale": 0.29
 				},
-				"parentReference": "solarSystem",
-				"parentRotation": 224.701,
-				"selfRotation": -243.023
+				"parentReference": "sun",
+				"orbitalRotation": 224.701,
+				"siderealRotation": -243.023
 			},
 			{
 				"name": "earth",
 				"texture": "src/textures/earth.jpg",
-				"isEmissive": false,
+				"mass": 0,
+
 				"repeat": [ 1 , 1 ],
 				"material": {
 					"map": "",
 					"side": 0
 				},
+				"reference": {
+					"position": [ 1, 0, 0 ]
+				},
 				"mesh": {
-					"position": [ 1, 0, 0 ],
 					"rotation": [ 0, 0, 0.2 ],
 					"scale": 0.3
 				},
-				"parentReference": "solarSystem",
-				"parentRotation": 365.25,
-				"selfRotation": 1
-			},
-			{
-				"name": "moon",
-				"texture": "src/textures/moon.jpg",
-				"isEmissive": false,
-				"repeat": [ 1 , 1 ],
-				"material": {
-					"map": "",
-					"side": 0
-				},
-				"mesh": {
-					"position": [ 0.03, 0, 0 ],
-					"rotation": [ 0, 0, 0 ],
-					"scale": 0.08
-				},
-				"parentReference": "earthReference",
-				"parentRotation": 27.322,
-				"selfRotation": 27.322
+				"parentReference": "sun",
+				"orbitalRotation": 365.25,
+				"siderealRotation": 1
 			},
 			{
 				"name": "mars",
 				"texture": "src/textures/mars.jpg",
-				"isEmissive": false,
+				"mass": 0,
+
 				"repeat": [ 1 , 1 ],
 				"material": {
 					"map": "",
 					"side": 0
 				},
+				"reference": {
+					"position": [ 1.52, 0, 0 ]
+				},
 				"mesh": {
-					"position": [ 1.52, 0, 0 ],
 					"rotation": [ 0, 0, 0 ],
 					"scale": 0.16
 				},
-				"parentReference": "solarSystem",
-				"parentRotation": 686.96,
-				"selfRotation": 1.026
+				"parentReference": "sun",
+				"orbitalRotation": 686.96,
+				"siderealRotation": 1.026
 			},
 			{
 				"name": "jupiter",
 				"texture": "src/textures/jupiter.jpg",
-				"isEmissive": false,
+				"mass": 0,
+
 				"repeat": [ 1 , 1 ],
 				"material": {
 					"map": "",
 					"side": 0
 				},
+				"reference": {
+					"position": [ 5.21, 0, 0 ]
+				},
 				"mesh": {
-					"position": [ 5.21, 0, 0 ],
 					"rotation": [ 0, 0, 0 ],
 					"scale": 1.2
 				},
-				"parentReference": "solarSystem",
-				"parentRotation": 4335.35,
-				"selfRotation": 0.414
+				"parentReference": "sun",
+				"orbitalRotation": 4335.35,
+				"siderealRotation": 0.414
 			},
 			{
 				"name": "saturn",
 				"texture": "src/textures/saturn.jpg",
-				"isEmissive": false,
+				"mass": 0,
+
 				"repeat": [ 1 , 1 ],
 				"material": {
 					"map": "",
 					"side": 0
 				},
+				"reference": {
+					"position": [ 9.54, 0, 0 ]
+				},
 				"mesh": {
-					"position": [ 9.54, 0, 0 ],
 					"rotation": [ 0, 0, 0 ],
 					"scale": 1.05
 				},
-				"parentReference": "solarSystem",
-				"parentRotation": 10757.74,
-				"selfRotation": 0.448
+				"parentReference": "sun",
+				"orbitalRotation": 10757.74,
+				"siderealRotation": 0.448
 			},
 			{
 				"name": "uranus",
 				"texture": "src/textures/uranus.jpg",
-				"isEmissive": false,
+				"mass": 0,
+
 				"repeat": [ 1 , 1 ],
 				"material": {
 					"map": "",
 					"side": 0
 				},
+				"reference": {
+					"position": [ 19.18, 0, 0 ]
+				},
 				"mesh": {
-					"position": [ 19.18, 0, 0 ],
 					"rotation": [ 0, 0, 1.57 ],
 					"scale": 1.2
 				},
-				"parentReference": "solarSystem",
-				"parentRotation": 30687.15,
-				"selfRotation": -0.718
+				"parentReference": "sun",
+				"orbitalRotation": 30687.15,
+				"siderealRotation": -0.718
 			},
 			{
 				"name": "neptune",
 				"texture": "src/textures/neptune.jpg",
-				"isEmissive": false,
+				"mass": 0,
+
 				"repeat": [ 1 , 1 ],
 				"material": {
 					"map": "",
 					"side": 0
 				},
+				"reference": {
+					"position": [ 30.11, 0, 0 ]
+				},
 				"mesh": {
-					"position": [ 30.11, 0, 0 ],
 					"rotation": [ 0, 0, 0 ],
 					"scale": 1.2
 				},
-				"parentReference": "solarSystem",
-				"parentRotation": 60224.9,
-				"selfRotation": 0.671
+				"parentReference": "sun",
+				"orbitalRotation": 60224.9,
+				"siderealRotation": 0.671
+			}
+		],
+		"satellites": [
+			{
+				"name": "moon",
+				"texture": "src/textures/moon.jpg",
+				"mass": 0,
+				"repeat": [ 1 , 1 ],
+				"material": {
+					"map": "",
+					"side": 0
+				},
+				"reference": {
+						"position": [ 0.03, 0, 0 ]
+				},
+				"mesh": {
+					"rotation": [ 0, 0, 0 ],
+					"scale": 0.08
+				},
+				"parentReference": "earth",
+				"orbitalRotation": 27.322,
+				"siderealRotation": 27.322
 			}
 		]
 	}
