@@ -11,9 +11,20 @@
 		<script src="js/FlyControls.js"></script>
 		<script src="js/OrbitControls.js"></script>
 		<script src="js/solarSystem.js"></script>
+		<script src="js/cockpitView.js"></script>
 
     </head>
     <body>
+		<div id="loadingPanel">
+			<p>Hello, please wait a second...</p>
+		</div>
+		<div id="solarSystem">
 
+		</div>
+		<div id="speedIndicator">
+		</div>
+		<div id="speedSlider">
+			<input type="range" min="0" max="99.99" step="0.01" value="0" class="vertical-slider" orient="vertical" oninput="updateSpeed(this)">
+		</div>
     </body>
 </html>

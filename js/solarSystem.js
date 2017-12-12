@@ -98,6 +98,7 @@
 	}
 
 window.onload = function() {
+	setTimeout(hideLoadingPanel, 5000);
 	var container, stats;
 	var camera, scene, renderer;
 	var clock, controls, delta;
@@ -115,13 +116,19 @@ window.onload = function() {
 
 	function init() {
 		scene = new THREE.Scene();
-		camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		var fieldOfView = 100,
+		aspectRatio = window.innerWidth / window.innerHeight,
+		nearPlane = 0.1,
+		farPlane = 1000;
+		camera = new THREE.PerspectiveCamera( fieldOfView, aspectRatio, nearPlane, farPlane );
 
 		renderer = new THREE.WebGLRenderer();
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		renderer.shadowMap.enabled = true;
-		renderer.setClearColor(new THREE.Color(0xEE2299, 1.0)); // To see from where the error is coming
-		document.body.appendChild( renderer.domElement );
+
+		//renderer.setClearColor(new THREE.Color(0xEE2299, 1.0)); // To see if there's an error
+		//
+		document.getElementById("solarSystem").appendChild( renderer.domElement ); // Append the 3D scene in the page
 
 		clock = new THREE.Clock();
 		delta = clock.getDelta();
