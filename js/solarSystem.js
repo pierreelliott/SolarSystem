@@ -153,62 +153,6 @@ window.onload = function() {
 		});
 	}
 
-	function solarSystemInitialization(jsonFile) {
-		var objects = jsonFile.solarSystem.stars;
-		var loader = new THREE.TextureLoader();
-
-		//var ring = new THREE.RingGeometry( 3, 5, 50);
-
-		var loadManagerVar = new LoadManager(objects.length,);
-
-		objects.forEach( function (e) {
-			loader.load(
-				e.texture,
-				function (texture) {
-					console.log(e);
-					var material;
-					if(e.isEmissive) {
-						e.material.map = texture;
-						e.material.emissiveMap = texture;
-						material = new THREE.MeshPhongMaterial( e.material );
-					} else {
-						texture.repeat.fromArray(e.repeat);
-						e.material.map = texture;
-						material = new THREE.MeshPhongMaterial( e.material );
-					}
-					var mesh = new THREE.Mesh(ball, material);
-					objectsMap.set(e.name,{ o: mesh, rotation: e.selfRotation });
-
-					var parentReferenceOb = objectsReferenceMap.get(e.parentReference);
-					var parentReference = parentReferenceOb.o;
-					var referenceOnParentOb = objectsReferenceOnParentMap.get(e.name+"ReferenceOnParent");
-					var referenceOnParent = referenceOnParentOb.o;
-
-					//console.log(e);
-					parentReference.add(referenceOnParent);
-
-					var reference = objectsReferenceMap.get(e.name+"Reference").o;
-
-					referenceOnParent.add(reference);
-					reference.position.fromArray(e.mesh.position);
-					reference.position.multiplyScalar(uniteAstronomique);
-
-					reference.add(mesh);
-
-					mesh.scale.setScalar(e.mesh.scale);
-
-					mesh.rotation.fromArray(e.mesh.rotation);
-
-					loadManagerVar.inc();
-				}/*,
-				Function called when download progresses
-				function (xhr) {
-
-				}*/
-			);
-		});
-	}
-
 	function intializeStars(jsonFile) {
 		var objects = jsonFile.solarSystem.stars;
 		var loader = new THREE.TextureLoader();
