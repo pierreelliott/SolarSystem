@@ -3,7 +3,7 @@
 		"stars": [
 			{
 				"name": "stars",
-				"texture": "src/textures/stars.jpg",
+				"texture": "src/textures/stars_low.jpg",
 				"mass": 0,
 
 				"repeat": [ 6 , 6 ],
@@ -16,7 +16,7 @@
 				},
 				"mesh": {
 					"rotation": [ 0, 0, 0 ],
-					"scale": 300
+					"scale": 400
 				},
 				"parentReference": "",
 				"orbitalRotation": 0,
@@ -24,7 +24,7 @@
 			},
 			{
 				"name": "sun",
-				"texture": "src/textures/sun.jpg",
+				"texture": "src/textures/sun_low.jpg",
 				"mass": 0,
 				"isEmissive": true,
 				"repeat": [ 1 , 1 ],
@@ -48,7 +48,7 @@
 		"planets": [
 			{
 				"name": "mercury",
-				"texture": "src/textures/mercure.jpg",
+				"texture": "src/textures/mercure_low.jpg",
 				"mass": 0,
 
 				"repeat": [ 1 , 1 ],
@@ -69,7 +69,7 @@
 			},
 			{
 				"name": "venus",
-				"texture": "src/textures/venus.jpg",
+				"texture": "src/textures/venus_low.jpg",
 				"mass": 0,
 
 				"repeat": [ 1 , 1 ],
@@ -90,7 +90,7 @@
 			},
 			{
 				"name": "earth",
-				"texture": "src/textures/earth.jpg",
+				"texture": "src/textures/earth_low.jpg",
 				"mass": 0,
 
 				"repeat": [ 1 , 1 ],
@@ -111,7 +111,7 @@
 			},
 			{
 				"name": "mars",
-				"texture": "src/textures/mars.jpg",
+				"texture": "src/textures/mars_low.jpg",
 				"mass": 0,
 
 				"repeat": [ 1 , 1 ],
@@ -132,7 +132,7 @@
 			},
 			{
 				"name": "jupiter",
-				"texture": "src/textures/jupiter.jpg",
+				"texture": "src/textures/jupiter_low.jpg",
 				"mass": 0,
 
 				"repeat": [ 1 , 1 ],
@@ -153,7 +153,7 @@
 			},
 			{
 				"name": "saturn",
-				"texture": "src/textures/saturn.jpg",
+				"texture": "src/textures/saturn_low.jpg",
 				"mass": 0,
 
 				"repeat": [ 1 , 1 ],
@@ -174,7 +174,7 @@
 			},
 			{
 				"name": "uranus",
-				"texture": "src/textures/uranus.jpg",
+				"texture": "src/textures/uranus_low.jpg",
 				"mass": 0,
 
 				"repeat": [ 1 , 1 ],
@@ -195,7 +195,7 @@
 			},
 			{
 				"name": "neptune",
-				"texture": "src/textures/neptune.jpg",
+				"texture": "src/textures/neptune_low.jpg",
 				"mass": 0,
 
 				"repeat": [ 1 , 1 ],
@@ -218,7 +218,7 @@
 		"satellites": [
 			{
 				"name": "moon",
-				"texture": "src/textures/moon.jpg",
+				"texture": "src/textures/moon_low.jpg",
 				"mass": 0,
 				"repeat": [ 1 , 1 ],
 				"material": {

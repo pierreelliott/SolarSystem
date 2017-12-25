@@ -19,7 +19,7 @@
 			parentReference.add(this.centerOfGravity);
 			this.centerOfGravity.add(this.positionInSpace);
 			this.positionInSpace.position.fromArray(file.reference.position); // Unité en UA
-			this.positionInSpace.position.multiplyScalar(uniteAstronomique);
+			this.positionInSpace.position.multiplyScalar(astronomicalUnit);
 			this.positionInSpace.name = file.name + "Position";
 			this.positionInSpace.add(this.reference);
 
@@ -50,7 +50,7 @@
 			var mesh = new THREE.Mesh(ball, material);
 
 			mesh.scale.setScalar(file.mesh.scale);
-			//mesh.scale.multiplyScalar(0.001*uniteAstronomique);
+			//mesh.scale.multiplyScalar(0.001*astronomicalUnit);
 			mesh.rotation.fromArray(file.mesh.rotation);
 
 			this.reference.add(mesh);
@@ -66,11 +66,11 @@
 			var ball = new THREE.SphereGeometry(1, 32, 32);
 			var mesh = new THREE.Mesh(ball, material);
 
-			//this.reference.position.multiplyScalar(uniteAstronomique);
+			//this.reference.position.multiplyScalar(astronomicalUnit);
 			// Il faudra penser à refléter l'absence de ce scalaire en changeant la valeur du vecteur de position
 
 			mesh.scale.setScalar(file.mesh.scale);
-			mesh.scale.multiplyScalar(0.1*uniteAstronomique);
+			mesh.scale.multiplyScalar(0.1*astronomicalUnit);
 			mesh.rotation.fromArray(file.mesh.rotation);
 
 			this.reference.add(mesh);
@@ -86,21 +86,28 @@
 			var ball = new THREE.SphereGeometry(1, 32, 32);
 			var mesh = new THREE.Mesh(ball, material);
 
-			//this.reference.position.multiplyScalar(uniteAstronomique);
+			//this.reference.position.multiplyScalar(astronomicalUnit);
 			// Il faudra penser à refléter l'absence de ce scalaire en changeant la valeur du vecteur de position
 
 			mesh.scale.setScalar(file.mesh.scale);
-			mesh.scale.multiplyScalar(0.1*uniteAstronomique);
+			mesh.scale.multiplyScalar(0.1*astronomicalUnit);
 			mesh.rotation.fromArray(file.mesh.rotation);
 
 			this.reference.add(mesh);
 		}
 	}
+	
+	class Spaceship {
+		constructor(object) {
+			this.mesh = object;
+		}
+	}
 
 window.onload = function() {
-	setTimeout(hideLoadingPanel, 5000);
+	//setTimeout(hideLoadingPanel, 5000);
 	var container, stats;
 	var camera, scene, renderer;
+	var cameraHud, sceneHud;
 	var clock, controls, delta;
 	celestialBodies = new Map();
 
@@ -109,7 +116,7 @@ window.onload = function() {
 	var objectsReferenceOnParentMap = new Map();
 
 	earthDay = 0.5;
-	uniteAstronomique = 10;
+	astronomicalUnit = 10;
 
 	init();
 
@@ -198,7 +205,7 @@ window.onload = function() {
 
 					referenceOnParent.add(reference);
 					reference.position.fromArray(e.mesh.position);
-					reference.position.multiplyScalar(uniteAstronomique);
+					reference.position.multiplyScalar(astronomicalUnit);
 
 					reference.add(mesh);
 
@@ -305,6 +312,7 @@ window.onload = function() {
 		});
 
 		animate();
+		hideLoadingPanel();
 	}
 
 	function animate() {
@@ -316,12 +324,21 @@ window.onload = function() {
 
 		delta = clock.getDelta();
 		controls.update( delta );
-		renderer.render( scene, camera );
+		//renderer.render( scene, camera );
+		
+		renderer.clear();
+		renderer.render(scene, camera);
+		renderer.clearDepth();
+		//renderer.render(sceneHud, cameraHud);
 	}
 
 	window.onresize = function () {
 		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
+		
+		//cameraHud.aspect = window.innerWidth / window.innerHeight;
+		//cameraHud.updateProjectionMatrix();
+		
 		renderer.setSize( window.innerWidth, window.innerHeight );
 	};
 }
