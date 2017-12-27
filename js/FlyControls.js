@@ -5,16 +5,36 @@
 THREE.FlyControls = function ( object, domElement ) {
 
 	this.object = object;
+	//this.camera = options.camera;
 
 	this.domElement = ( domElement !== undefined ) ? domElement : document;
 	if ( domElement ) this.domElement.setAttribute( 'tabindex', - 1 );
 
 	// API
+	
+	// Set to false to disable this control
+	this.enabled = true;
+	
+	// Set to true to enable damping (inertia)
+	this.enableDamping = false;
+	this.dampingFactor = 0.25;
+	
+	// Set to true/false to enable corresponding moving axis
+	this.enableYawing = true; 				// Yaw left / Yaw right
+	this.enablePitching = true; 			// Pitch up / Pitch down
+	this.enableRolling = true; 				// Roll left / Roll right
+	this.enableMoving = true; 				// Forward / Backward
+	this.enableVerticalMoving = false; 		// Up / Down
+	this.enableHorizontalMoving = false; 	// Left / Right
 
 	this.movementSpeed = 1.0;
 	this.rollSpeed = 0.005;
 
+	// Set to true to allow moving with the mouse
 	this.dragToLook = false;
+	
+	// Set to true to enable auto-forward
+	// If enabled, the object will continue to move forward until 'Backward key' is pushed
 	this.autoForward = false;
 
 	// disable default target object behavior
@@ -24,10 +44,21 @@ THREE.FlyControls = function ( object, domElement ) {
 	this.tmpQuaternion = new THREE.Quaternion();
 
 	this.mouseStatus = 0;
+	
+	this.keys = {
+		YAWLEFT: 81 /*Q*/, YAWRIGHT: 68 /*D*/,
+		PITCHUP: 82 /*R*/, PITCHDOWN: 70 /*F*/,
+		FORWARD: 90 /*Z*/, BACKWARD: 83 /*S*/,
+		LEFT: 37 /*left*/, RIGHT: 39 /*right*/,
+		UP: 38 /*up*/, DOWN: 40 /*down*/,
+		ROLLLEFT: 65 /*A*/, ROLLRIGHT: 69 /*E*/
+	};
 
 	this.moveState = { up: 0, down: 0, left: 0, right: 0, forward: 0, back: 0, pitchUp: 0, pitchDown: 0, yawLeft: 0, yawRight: 0, rollLeft: 0, rollRight: 0 };
 	this.moveVector = new THREE.Vector3( 0, 0, 0 );
 	this.rotationVector = new THREE.Vector3( 0, 0, 0 );
+	
+	// ====== Public methods ======
 
 	this.handleEvent = function ( event ) {
 
@@ -38,78 +69,182 @@ THREE.FlyControls = function ( object, domElement ) {
 		}
 
 	};
+	
+	this.update = function( delta ) {
 
-	this.keydown = function( event ) {
+		var moveMult = delta * this.movementSpeed;
+		var rotMult = delta * this.rollSpeed;
 
-		if ( event.altKey ) {
+		this.object.translateX( this.moveVector.x * moveMult );
+		this.object.translateY( this.moveVector.y * moveMult );
+		this.object.translateZ( this.moveVector.z * moveMult );
 
-			return;
+		this.tmpQuaternion.set( this.rotationVector.x * rotMult, this.rotationVector.y * rotMult, this.rotationVector.z * rotMult, 1 ).normalize();
+		this.object.quaternion.multiply( this.tmpQuaternion );
+
+		// expose the rotation vector for convenience
+		this.object.rotation.setFromQuaternion( this.object.quaternion, this.object.rotation.order );
+
+	};
+	
+	this.getContainerDimensions = function() {
+
+		if ( this.domElement != document ) {
+
+			return {
+				size	: [ this.domElement.offsetWidth, this.domElement.offsetHeight ],
+				offset	: [ this.domElement.offsetLeft,  this.domElement.offsetTop ]
+			};
+
+		} else {
+
+			return {
+				size	: [ window.innerWidth, window.innerHeight ],
+				offset	: [ 0, 0 ]
+			};
 
 		}
+
+	};
+	
+	this.dispose = function() {
+
+		this.domElement.removeEventListener( 'contextmenu', contextmenu, false );
+		this.domElement.removeEventListener( 'mousedown', _mousedown, false );
+		this.domElement.removeEventListener( 'mousemove', _mousemove, false );
+		this.domElement.removeEventListener( 'mouseup', _mouseup, false );
+
+		window.removeEventListener( 'keydown', _keydown, false );
+		window.removeEventListener( 'keyup', _keyup, false );
+
+	};
+	
+	// ====== Internals ======
+	
+	var scope = this;
+	
+	function horizontalMoving() {
+		
+	}
+	function verticlaMoving() {
+		
+	}
+	function moving() {
+		
+	}
+	function yawing() {
+		
+	}
+	function rolling() {
+		
+	}
+	function pitching() {
+		
+	}
+
+	function keydown( event ) {
+		
+		if ( scope.enabled === false ) return;
+
+		if ( event.altKey ) return;
 
 		//event.preventDefault();
 
 		switch ( event.keyCode ) {
 
-			case 16: /* shift */ this.movementSpeedMultiplier = .1; break;
+			case 16: /* shift */ scope.movementSpeedMultiplier = .1; break;
 
-			case 90: /*Z*/ this.moveState.forward = 1; break;
-			case 83: /*S*/ this.moveState.back = 1; break;
+			case scope.keys.FORWARD:
+				if( !scope.enableMoving ) break;
+				scope.moveState.forward = 1;
+				break;
+			case scope.keys.BACKWARD:
+				if( !scope.enableMoving ) break;
+				scope.moveState.back = 1;
+				break;
 
-			case 81: /*Q*/ this.moveState.left = 1; break;
-			case 68: /*D*/ this.moveState.right = 1; break;
+			case scope.keys.LEFT:
+				if( !scope.enableHorizontalMoving ) break;
+				scope.moveState.left = 1;
+				break;
+			case scope.keys.RIGHT:
+				if( !scope.enableHorizontalMoving ) break;
+				scope.moveState.right = 1;
+				break;
 
-			case 82: /*R*/ this.moveState.up = 1; break;
-			case 70: /*F*/ this.moveState.down = 1; break;
+			case scope.keys.UP:
+				if( !scope.enableVerticalMoving ) break;
+				scope.moveState.up = 1;
+				break;
+			case scope.keys.DOWN:
+				if( !scope.enableVerticalMoving ) break;
+				scope.moveState.down = 1;
+				break;
 
-			case 38: /*up*/ this.moveState.pitchUp = 1; break;
-			case 40: /*down*/ this.moveState.pitchDown = 1; break;
+			case scope.keys.PITCHUP:
+				scope.moveState.pitchUp = 1;
+				break;
+			case scope.keys.PITCHDOWN:
+				scope.moveState.pitchDown = 1;
+				break;
 
-			case 37: /*left*/ this.moveState.yawLeft = 1; break;
-			case 39: /*right*/ this.moveState.yawRight = 1; break;
+			case scope.keys.YAWLEFT:
+				scope.moveState.yawLeft = 1;
+				break;
+			case scope.keys.YAWRIGHT:
+				scope.moveState.yawRight = 1;
+				break;
 
-			case 65: /*A*/ this.moveState.rollLeft = 1; break;
-			case 69: /*E*/ this.moveState.rollRight = 1; break;
+			case scope.keys.ROLLLEFT:
+				scope.moveState.rollLeft = 1;
+				break;
+			case scope.keys.ROLLRIGHT:
+				scope.moveState.rollRight = 1;
+				break;
 
 		}
 
-		this.updateMovementVector();
-		this.updateRotationVector();
+		updateMovementVector();
+		updateRotationVector();
 
 	};
 
-	this.keyup = function( event ) {
+	function keyup( event ) {
+		
+		if ( scope.enabled === false ) return;
 
 		switch ( event.keyCode ) {
 
-			case 16: /* shift */ this.movementSpeedMultiplier = 1; break;
+			case 16: /* shift */ scope.movementSpeedMultiplier = 1; break;
 
-			case 90: /*Z*/ this.moveState.forward = 0; break;
-			case 83: /*S*/ this.moveState.back = 0; break;
+			case scope.keys.FORWARD: scope.moveState.forward = 0; break;
+			case scope.keys.BACKWARD: scope.moveState.back = 0; break;
 
-			case 81: /*Q*/ this.moveState.left = 0; break;
-			case 68: /*D*/ this.moveState.right = 0; break;
+			case scope.keys.LEFT: scope.moveState.left = 0; break;
+			case scope.keys.RIGHT: scope.moveState.right = 0; break;
 
-			case 82: /*R*/ this.moveState.up = 0; break;
-			case 70: /*F*/ this.moveState.down = 0; break;
+			case scope.keys.UP: scope.moveState.up = 0; break;
+			case scope.keys.DOWN: scope.moveState.down = 0; break;
 
-			case 38: /*up*/ this.moveState.pitchUp = 0; break;
-			case 40: /*down*/ this.moveState.pitchDown = 0; break;
+			case scope.keys.PITCHUP: scope.moveState.pitchUp = 0; break;
+			case scope.keys.PITCHDOWN: scope.moveState.pitchDown = 0; break;
 
-			case 37: /*left*/ this.moveState.yawLeft = 0; break;
-			case 39: /*right*/ this.moveState.yawRight = 0; break;
+			case scope.keys.YAWLEFT: scope.moveState.yawLeft = 0; break;
+			case scope.keys.YAWRIGHT: scope.moveState.yawRight = 0; break;
 
-			case 65: /*A*/ this.moveState.rollLeft = 0; break;
-			case 69: /*E*/ this.moveState.rollRight = 0; break;
+			case scope.keys.ROLLLEFT: scope.moveState.rollLeft = 0; break;
+			case scope.keys.ROLLRIGHT: scope.moveState.rollRight = 0; break;
 
 		}
 
-		this.updateMovementVector();
-		this.updateRotationVector();
+		updateMovementVector();
+		updateRotationVector();
 
 	};
 
-	this.mousedown = function( event ) {
+	function mousedown( event ) {
+		
+		if ( this.enabled === false ) return;
 
 		if ( this.domElement !== document ) {
 
@@ -133,13 +268,15 @@ THREE.FlyControls = function ( object, domElement ) {
 
 			}
 
-			this.updateMovementVector();
+			updateMovementVector();
 
 		}
 
 	};
 
-	this.mousemove = function( event ) {
+	function mousemove( event ) {
+		
+		if ( this.enabled === false ) return;
 
 		if ( ! this.dragToLook || this.mouseStatus > 0 ) {
 
@@ -150,13 +287,15 @@ THREE.FlyControls = function ( object, domElement ) {
 			this.moveState.yawLeft   = - ( ( event.pageX - container.offset[ 0 ] ) - halfWidth  ) / halfWidth;
 			this.moveState.pitchDown =   ( ( event.pageY - container.offset[ 1 ] ) - halfHeight ) / halfHeight;
 
-			this.updateRotationVector();
+			updateRotationVector();
 
 		}
 
 	};
 
-	this.mouseup = function( event ) {
+	function mouseup( event ) {
+		
+		if ( this.enabled === false ) return;
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -176,71 +315,33 @@ THREE.FlyControls = function ( object, domElement ) {
 
 			}
 
-			this.updateMovementVector();
+			updateMovementVector();
 
 		}
 
-		this.updateRotationVector();
+		updateRotationVector();
 
 	};
 
-	this.update = function( delta ) {
+	function updateMovementVector() {
 
-		var moveMult = delta * this.movementSpeed;
-		var rotMult = delta * this.rollSpeed;
+		var forward = ( scope.moveState.forward || ( scope.autoForward && ! scope.moveState.back ) ) ? 1 : 0;
 
-		this.object.translateX( this.moveVector.x * moveMult );
-		this.object.translateY( this.moveVector.y * moveMult );
-		this.object.translateZ( this.moveVector.z * moveMult );
-
-		this.tmpQuaternion.set( this.rotationVector.x * rotMult, this.rotationVector.y * rotMult, this.rotationVector.z * rotMult, 1 ).normalize();
-		this.object.quaternion.multiply( this.tmpQuaternion );
-
-		// expose the rotation vector for convenience
-		this.object.rotation.setFromQuaternion( this.object.quaternion, this.object.rotation.order );
-
-
-	};
-
-	this.updateMovementVector = function() {
-
-		var forward = ( this.moveState.forward || ( this.autoForward && ! this.moveState.back ) ) ? 1 : 0;
-
-		this.moveVector.x = ( - this.moveState.left    + this.moveState.right );
-		this.moveVector.y = ( - this.moveState.down    + this.moveState.up );
-		this.moveVector.z = ( - forward + this.moveState.back );
+		scope.moveVector.x = ( - scope.moveState.left    + scope.moveState.right );
+		scope.moveVector.y = ( - scope.moveState.down    + scope.moveState.up );
+		scope.moveVector.z = ( - forward + scope.moveState.back );
 
 		//console.log( 'move:', [ this.moveVector.x, this.moveVector.y, this.moveVector.z ] );
 
 	};
 
-	this.updateRotationVector = function() {
+	function updateRotationVector() {
 
-		this.rotationVector.x = ( - this.moveState.pitchDown + this.moveState.pitchUp );
-		this.rotationVector.y = ( - this.moveState.yawRight  + this.moveState.yawLeft );
-		this.rotationVector.z = ( - this.moveState.rollRight + this.moveState.rollLeft );
+		scope.rotationVector.x = ( - scope.moveState.pitchDown + scope.moveState.pitchUp );
+		scope.rotationVector.y = ( - scope.moveState.yawRight  + scope.moveState.yawLeft );
+		scope.rotationVector.z = ( - scope.moveState.rollRight + scope.moveState.rollLeft );
 
 		//console.log( 'rotate:', [ this.rotationVector.x, this.rotationVector.y, this.rotationVector.z ] );
-
-	};
-
-	this.getContainerDimensions = function() {
-
-		if ( this.domElement != document ) {
-
-			return {
-				size	: [ this.domElement.offsetWidth, this.domElement.offsetHeight ],
-				offset	: [ this.domElement.offsetLeft,  this.domElement.offsetTop ]
-			};
-
-		} else {
-
-			return {
-				size	: [ window.innerWidth, window.innerHeight ],
-				offset	: [ 0, 0 ]
-			};
-
-		}
 
 	};
 
@@ -260,23 +361,13 @@ THREE.FlyControls = function ( object, domElement ) {
 
 	}
 
-	this.dispose = function() {
-
-		this.domElement.removeEventListener( 'contextmenu', contextmenu, false );
-		this.domElement.removeEventListener( 'mousedown', _mousedown, false );
-		this.domElement.removeEventListener( 'mousemove', _mousemove, false );
-		this.domElement.removeEventListener( 'mouseup', _mouseup, false );
-
-		window.removeEventListener( 'keydown', _keydown, false );
-		window.removeEventListener( 'keyup', _keyup, false );
-
-	};
-
-	var _mousemove = bind( this, this.mousemove );
-	var _mousedown = bind( this, this.mousedown );
-	var _mouseup = bind( this, this.mouseup );
-	var _keydown = bind( this, this.keydown );
-	var _keyup = bind( this, this.keyup );
+	// ====== Events ======
+	
+	var _mousemove = bind( this, mousemove );
+	var _mousedown = bind( this, mousedown );
+	var _mouseup = bind( this, mouseup );
+	var _keydown = bind( this, keydown );
+	var _keyup = bind( this, keyup );
 
 	this.domElement.addEventListener( 'contextmenu', contextmenu, false );
 
@@ -287,7 +378,7 @@ THREE.FlyControls = function ( object, domElement ) {
 	window.addEventListener( 'keydown', _keydown, false );
 	window.addEventListener( 'keyup',   _keyup, false );
 
-	this.updateMovementVector();
-	this.updateRotationVector();
+	updateMovementVector();
+	updateRotationVector();
 
 };

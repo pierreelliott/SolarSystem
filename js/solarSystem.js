@@ -98,8 +98,27 @@
 	}
 	
 	class Spaceship {
-		constructor(object) {
+		constructor(object, parentReference) {
 			this.mesh = object;
+			this.reference = new THREE.Object3D();
+			this.reference.add(this.mesh);
+			parentReference.add(this.reference);
+			this.reference.position.z = 10;
+			this.mesh.scale.setScalar(0.001);
+			this.mesh.rotation.y = Math.PI;
+		}
+		getControls(camera, domElem) {
+			this.reference.add(camera);
+			camera.rotation.x = 0.1;
+			camera.position.z = 0.1;
+			
+			var controls = new THREE.FlyControls( this.reference, domElem, {camera: camera} );
+			controls.movementSpeed = 10;
+			controls.rollSpeed = Math.PI / 6;
+			controls.autoForward = false;
+			controls.dragToLook = true;
+			
+			return controls;
 		}
 	}
 
@@ -110,10 +129,7 @@ window.onload = function() {
 	var cameraHud, sceneHud;
 	var clock, controls, delta;
 	celestialBodies = new Map();
-
-	var objectsMap = new Map();
-	var objectsReferenceMap = new Map();
-	var objectsReferenceOnParentMap = new Map();
+	ships = new Map();
 
 	earthDay = 0.5;
 	astronomicalUnit = 10;
@@ -123,31 +139,36 @@ window.onload = function() {
 
 	function init() {
 		scene = new THREE.Scene();
+		sceneHud = new THREE.Scene();
+		
+		var width = window.innerWidth;
+		var height = window.innerHeight;
+		
 		var fieldOfView = 100,
-		aspectRatio = window.innerWidth / window.innerHeight,
-		nearPlane = 0.1,
-		farPlane = 1000;
+			aspectRatio = window.innerWidth / window.innerHeight,
+			nearPlane = 0.01,
+			farPlane = 1000;
 		camera = new THREE.PerspectiveCamera( fieldOfView, aspectRatio, nearPlane, farPlane );
+		//cameraHud = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 1, 1000 );
+		
+		scene.add(camera);
+		//sceneHud.add(cameraHud);
 
 		renderer = new THREE.WebGLRenderer();
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		renderer.shadowMap.enabled = true;
 
-		//renderer.setClearColor(new THREE.Color(0xEE2299, 1.0)); // To see if there's an error
-		//
 		document.getElementById("solarSystem").appendChild( renderer.domElement ); // Append the 3D scene in the page
 
 		clock = new THREE.Clock();
 		delta = clock.getDelta();
-		console.log("Delta : ");
-		console.log(delta);
-		camera.position.z = 20;
-		camera.rotation.x = -0.2;
+		//camera.position.z = 20;
+		//camera.rotation.x = -0.2;
 
-		controls = new THREE.OrbitControls( camera, renderer.domElement );
+		/*controls = new THREE.OrbitControls( camera, renderer.domElement );
 		controls.enableDamping = true;
 		controls.dampingFactor = 0.25;
-		controls.enableZoom = true;
+		controls.enableZoom = true;*/
 
 		var light = new THREE.PointLight( 0xFFFFFF, 1, 200, 2 );
 		var ambientlight = new THREE.AmbientLight( 0x202020 );
@@ -155,6 +176,16 @@ window.onload = function() {
 		scene.add(ambientlight);;
 
 		ajax("src/ressources.json", intializeStars )
+	}
+	
+	function initHud() {
+		var hudGeometry = new THREE.ConeGeometry(0.1, 0.2, 16);
+		hudGeometry.rotateX(Math.PI * 0.5);
+		var hudMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide });
+
+		var hudData = new THREE.Mesh(hudGeometry, hudMaterial);
+		
+		sceneHud.add(hudData);
 	}
 
 	function ajax(data_url, callback) {
@@ -164,62 +195,6 @@ window.onload = function() {
 			} else {
 				console.log("Error " + status);
 			}
-		});
-	}
-
-	function solarSystemInitialization(jsonFile) {
-		var objects = jsonFile.solarSystem.stars;
-		var loader = new THREE.TextureLoader();
-
-		//var ring = new THREE.RingGeometry( 3, 5, 50);
-
-		var loadManagerVar = new LoadManager(objects.length,);
-
-		objects.forEach( function (e) {
-			loader.load(
-				e.texture,
-				function (texture) {
-					console.log(e);
-					var material;
-					if(e.isEmissive) {
-						e.material.map = texture;
-						e.material.emissiveMap = texture;
-						material = new THREE.MeshPhongMaterial( e.material );
-					} else {
-						texture.repeat.fromArray(e.repeat);
-						e.material.map = texture;
-						material = new THREE.MeshPhongMaterial( e.material );
-					}
-					var mesh = new THREE.Mesh(ball, material);
-					objectsMap.set(e.name,{ o: mesh, rotation: e.selfRotation });
-
-					var parentReferenceOb = objectsReferenceMap.get(e.parentReference);
-					var parentReference = parentReferenceOb.o;
-					var referenceOnParentOb = objectsReferenceOnParentMap.get(e.name+"ReferenceOnParent");
-					var referenceOnParent = referenceOnParentOb.o;
-
-					//console.log(e);
-					parentReference.add(referenceOnParent);
-
-					var reference = objectsReferenceMap.get(e.name+"Reference").o;
-
-					referenceOnParent.add(reference);
-					reference.position.fromArray(e.mesh.position);
-					reference.position.multiplyScalar(astronomicalUnit);
-
-					reference.add(mesh);
-
-					mesh.scale.setScalar(e.mesh.scale);
-
-					mesh.rotation.fromArray(e.mesh.rotation);
-
-					loadManagerVar.inc();
-				}/*,
-				Function called when download progresses
-				function (xhr) {
-
-				}*/
-			);
 		});
 	}
 
@@ -271,7 +246,7 @@ window.onload = function() {
 		var loader = new THREE.TextureLoader();
 
 		var loadManagerVar = new LoadManager(objects.length,function() {
-			randomizePosition();
+			initializeSpaceship();
 		});
 
 		objects.forEach( function (e) {
@@ -287,17 +262,36 @@ window.onload = function() {
 			);
 		});
 	}
+	
+	function initializeSpaceship() {
+		var loader = new THREE.ObjectLoader();
+		var loadManagerVar = new LoadManager(1,function() {
+			randomizePosition();
+		});
+
+		loader.load(
+			"src/rocket_ship.json",
+			function ( obj ) {
+				var playerShip = new Spaceship(obj, scene);
+				controls = playerShip.getControls(camera, renderer.domElement);
+				ships.set("player", playerShip);
+				
+				loadManagerVar.finished();
+			}
+		);
+	}
 
 	function LoadManager(count, callback) {
 		this.numberObjectsCreated = 0;
 		this.max = count;
 		this.callback = callback;
-	}
-	LoadManager.prototype.finished = function () {
-		this.numberObjectsCreated++;
-		//console.log(this.numberObjectsCreated+" objets créés");
-		if(this.numberObjectsCreated >= this.max) {
-			this.callback();
+		
+		this.finished = function () {
+			this.numberObjectsCreated++;
+			//console.log(this.numberObjectsCreated+" objets créés");
+			if(this.numberObjectsCreated >= this.max) {
+				this.callback();
+			}
 		}
 	}
 
@@ -305,7 +299,6 @@ window.onload = function() {
 		var rand;
 		celestialBodies.forEach( function (obj, name) {
 			rand = Math.round(Math.random()*1000000);
-			console.log("Rand : " + rand);
 			for(var i; i < rand; i++) {
 				obj.rotate();
 			}
@@ -326,9 +319,9 @@ window.onload = function() {
 		controls.update( delta );
 		//renderer.render( scene, camera );
 		
-		renderer.clear();
+		//renderer.clear();
 		renderer.render(scene, camera);
-		renderer.clearDepth();
+		//renderer.clearDepth();
 		//renderer.render(sceneHud, cameraHud);
 	}
 
