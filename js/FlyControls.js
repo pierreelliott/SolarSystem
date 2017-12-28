@@ -29,12 +29,29 @@ THREE.FlyControls = function ( object, domElement ) {
 
 	this.movementSpeed = 1.0;
 	this.rollSpeed = 0.005;
+	
+	this.speed = {
+		FORWARD: 1, BACKWARD: 1,
+		YAWLEFT: 0.005, YAWRIGHT: 0.005,
+		PITCHUP: 0.005, PITCHDOWN: 0.005,
+		ROLLLEFT: 0.005, ROLLRIGHT: 0.005,
+		LEFT: 0.005, RIGHT: 0.005,
+		UP: 0.005, DOWN: 0.005
+	}
+	this.maxSpeed = {
+		FORWARD: 10, BACKWARD: 10,
+		YAWLEFT: 0.005, YAWRIGHT: 0.005,
+		PITCHUP: 0.005, PITCHDOWN: 0.005,
+		ROLLLEFT: 0.005, ROLLRIGHT: 0.005,
+		LEFT: 0.005, RIGHT: 0.005,
+		UP: 0.005, DOWN: 0.005
+	}
 
 	// Set to true to allow moving with the mouse
 	this.dragToLook = false;
 	
 	// Set to true to enable auto-forward
-	// If enabled, the object will continue to move forward until 'Backward key' is pushed
+	// If enabled, the object will continue to move forward until it slows down ('Backward key' is pushed)
 	this.autoForward = false;
 
 	// disable default target object behavior
@@ -46,12 +63,12 @@ THREE.FlyControls = function ( object, domElement ) {
 	this.mouseStatus = 0;
 	
 	this.keys = {
-		YAWLEFT: 81 /*Q*/, YAWRIGHT: 68 /*D*/,
-		PITCHUP: 82 /*R*/, PITCHDOWN: 70 /*F*/,
 		FORWARD: 90 /*Z*/, BACKWARD: 83 /*S*/,
+		YAWLEFT: 81 /*Q*/, YAWRIGHT: 68 /*D*/,
+		ROLLLEFT: 65 /*A*/, ROLLRIGHT: 69 /*E*/,
+		PITCHUP: 82 /*R*/, PITCHDOWN: 70 /*F*/,
 		LEFT: 37 /*left*/, RIGHT: 39 /*right*/,
-		UP: 38 /*up*/, DOWN: 40 /*down*/,
-		ROLLLEFT: 65 /*A*/, ROLLRIGHT: 69 /*E*/
+		UP: 38 /*up*/, DOWN: 40 /*down*/
 	};
 
 	this.moveState = { up: 0, down: 0, left: 0, right: 0, forward: 0, back: 0, pitchUp: 0, pitchDown: 0, yawLeft: 0, yawRight: 0, rollLeft: 0, rollRight: 0 };
@@ -123,24 +140,26 @@ THREE.FlyControls = function ( object, domElement ) {
 	
 	var scope = this;
 	
-	function horizontalMoving() {
-		
+	/*function moveMult(axis) {
+		var mult;
+		switch(axis) {
+			case "x":
+				mult = scope.speed
+				break;
+			case "y":
+				mult = scope.speed
+				break;
+			case "z":
+				mult = scope.speed
+				break;
+		}
 	}
-	function verticlaMoving() {
-		
-	}
-	function moving() {
-		
-	}
-	function yawing() {
-		
-	}
-	function rolling() {
-		
-	}
-	function pitching() {
-		
-	}
+	
+	function rotMult(axis) {
+		switch(axis) {
+			
+		}
+	}*/
 
 	function keydown( event ) {
 		
@@ -182,23 +201,29 @@ THREE.FlyControls = function ( object, domElement ) {
 				break;
 
 			case scope.keys.PITCHUP:
+				if( !scope.enablePitching ) break;
 				scope.moveState.pitchUp = 1;
 				break;
 			case scope.keys.PITCHDOWN:
+				if( !scope.enablePitching ) break;
 				scope.moveState.pitchDown = 1;
 				break;
 
 			case scope.keys.YAWLEFT:
+				if( !scope.enableYawing ) break;
 				scope.moveState.yawLeft = 1;
 				break;
 			case scope.keys.YAWRIGHT:
+				if( !scope.enableYawing ) break;
 				scope.moveState.yawRight = 1;
 				break;
 
 			case scope.keys.ROLLLEFT:
+				if( !scope.enableRolling ) break;
 				scope.moveState.rollLeft = 1;
 				break;
 			case scope.keys.ROLLRIGHT:
+				if( !scope.enableRolling ) break;
 				scope.moveState.rollRight = 1;
 				break;
 
@@ -244,27 +269,27 @@ THREE.FlyControls = function ( object, domElement ) {
 
 	function mousedown( event ) {
 		
-		if ( this.enabled === false ) return;
+		if ( scope.enabled === false ) return;
 
-		if ( this.domElement !== document ) {
+		if ( scope.domElement !== document ) {
 
-			this.domElement.focus();
+			scope.domElement.focus();
 
 		}
 
 		event.preventDefault();
 		event.stopPropagation();
 
-		if ( this.dragToLook ) {
+		if ( scope.dragToLook ) {
 
-			this.mouseStatus ++;
+			scope.mouseStatus ++;
 
 		} else {
 
 			switch ( event.button ) {
 
-				case 0: this.moveState.forward = 1; break;
-				case 2: this.moveState.back = 1; break;
+				case 0: scope.moveState.forward = 1; break;
+				case 2: scope.moveState.back = 1; break;
 
 			}
 
@@ -276,16 +301,16 @@ THREE.FlyControls = function ( object, domElement ) {
 
 	function mousemove( event ) {
 		
-		if ( this.enabled === false ) return;
+		if ( scope.enabled === false ) return;
 
-		if ( ! this.dragToLook || this.mouseStatus > 0 ) {
+		if ( ! scope.dragToLook || scope.mouseStatus > 0 ) {
 
-			var container = this.getContainerDimensions();
+			var container = scope.getContainerDimensions();
 			var halfWidth  = container.size[ 0 ] / 2;
 			var halfHeight = container.size[ 1 ] / 2;
 
-			this.moveState.yawLeft   = - ( ( event.pageX - container.offset[ 0 ] ) - halfWidth  ) / halfWidth;
-			this.moveState.pitchDown =   ( ( event.pageY - container.offset[ 1 ] ) - halfHeight ) / halfHeight;
+			scope.moveState.yawLeft   = - ( ( event.pageX - container.offset[ 0 ] ) - halfWidth  ) / halfWidth;
+			scope.moveState.pitchDown =   ( ( event.pageY - container.offset[ 1 ] ) - halfHeight ) / halfHeight;
 
 			updateRotationVector();
 
@@ -295,23 +320,23 @@ THREE.FlyControls = function ( object, domElement ) {
 
 	function mouseup( event ) {
 		
-		if ( this.enabled === false ) return;
+		if ( scope.enabled === false ) return;
 
 		event.preventDefault();
 		event.stopPropagation();
 
-		if ( this.dragToLook ) {
+		if ( scope.dragToLook ) {
 
-			this.mouseStatus --;
+			scope.mouseStatus --;
 
-			this.moveState.yawLeft = this.moveState.pitchDown = 0;
+			scope.moveState.yawLeft = scope.moveState.pitchDown = 0;
 
 		} else {
 
 			switch ( event.button ) {
 
-				case 0: this.moveState.forward = 0; break;
-				case 2: this.moveState.back = 0; break;
+				case 0: scope.moveState.forward = 0; break;
+				case 2: scope.moveState.back = 0; break;
 
 			}
 
@@ -331,7 +356,7 @@ THREE.FlyControls = function ( object, domElement ) {
 		scope.moveVector.y = ( - scope.moveState.down    + scope.moveState.up );
 		scope.moveVector.z = ( - forward + scope.moveState.back );
 
-		//console.log( 'move:', [ this.moveVector.x, this.moveVector.y, this.moveVector.z ] );
+		//console.log( 'move:', [ scope.moveVector.x, scope.moveVector.y, scope.moveVector.z ] );
 
 	};
 
@@ -341,7 +366,7 @@ THREE.FlyControls = function ( object, domElement ) {
 		scope.rotationVector.y = ( - scope.moveState.yawRight  + scope.moveState.yawLeft );
 		scope.rotationVector.z = ( - scope.moveState.rollRight + scope.moveState.rollLeft );
 
-		//console.log( 'rotate:', [ this.rotationVector.x, this.rotationVector.y, this.rotationVector.z ] );
+		//console.log( 'rotate:', [ scope.rotationVector.x, scope.rotationVector.y, scope.rotationVector.z ] );
 
 	};
 

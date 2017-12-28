@@ -5,6 +5,10 @@
  * All rights reserved
  */
 
+window.addEventListener( 'load', SolarSystem, false );	
+
+
+function SolarSystem() {
 	class CelestialBody {
 		constructor(file, parentReference, type) {
 			this.centerOfGravity = new THREE.Object3D();
@@ -41,7 +45,7 @@
 
 	class Star extends CelestialBody {
 		constructor(file, texture, parentReference) {
-			super(file, parentReference, "Star");
+			super(file, parentReference, "STAR");
 
 			file.material.emissiveMap = texture;
 			file.material.map = texture;
@@ -59,7 +63,7 @@
 
 	class Planet extends CelestialBody {
 		constructor(file, texture, parentReference) {
-			super(file, parentReference, "Planet");
+			super(file, parentReference, "PLANET");
 
 			file.material.map = texture;
 			var material = new THREE.MeshPhongMaterial( file.material );
@@ -79,7 +83,7 @@
 
 	class Satellite extends CelestialBody {
 		constructor(file, texture, parentReference) {
-			super(file, parentReference, "Satellite");
+			super(file, parentReference, "SATELLITE");
 
 			file.material.map = texture;
 			var material = new THREE.MeshPhongMaterial( file.material );
@@ -98,7 +102,7 @@
 	}
 	
 	class Spaceship {
-		constructor(object, parentReference) {
+		constructor(object, parentReference, camera) {
 			this.mesh = object;
 			this.reference = new THREE.Object3D();
 			this.reference.add(this.mesh);
@@ -106,23 +110,22 @@
 			this.reference.position.z = 10;
 			this.mesh.scale.setScalar(0.001);
 			this.mesh.rotation.y = Math.PI;
-		}
-		getControls(camera, domElem) {
+			
 			this.reference.add(camera);
 			camera.rotation.x = 0.1;
 			camera.position.z = 0.1;
-			
+		}
+		getControls(camera, domElem) {			
 			var controls = new THREE.FlyControls( this.reference, domElem, {camera: camera} );
-			controls.movementSpeed = 10;
-			controls.rollSpeed = Math.PI / 6;
+			controls.movementSpeed = 5;
+			controls.rollSpeed = Math.PI / 4;
 			controls.autoForward = false;
 			controls.dragToLook = true;
 			
 			return controls;
 		}
 	}
-
-window.onload = function() {
+	
 	//setTimeout(hideLoadingPanel, 5000);
 	var container, stats;
 	var camera, scene, renderer;
@@ -131,59 +134,69 @@ window.onload = function() {
 	celestialBodies = new Map();
 	ships = new Map();
 
-	earthDay = 0.5;
+	earthDay = 0.005;
 	astronomicalUnit = 10;
+	
+	var HUD;
 
 	init();
 
 
 	function init() {
-		scene = new THREE.Scene();
-		sceneHud = new THREE.Scene();
-		
-		var width = window.innerWidth;
-		var height = window.innerHeight;
+		initScene();
+		//initHud();
 		
 		var fieldOfView = 100,
 			aspectRatio = window.innerWidth / window.innerHeight,
 			nearPlane = 0.01,
 			farPlane = 1000;
 		camera = new THREE.PerspectiveCamera( fieldOfView, aspectRatio, nearPlane, farPlane );
-		//cameraHud = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 1, 1000 );
-		
-		scene.add(camera);
-		//sceneHud.add(cameraHud);
 
 		renderer = new THREE.WebGLRenderer();
 		renderer.setSize( window.innerWidth, window.innerHeight );
+		renderer.autoClear = false;
+            renderer.setPixelRatio(window.devicePixelRatio);
 		renderer.shadowMap.enabled = true;
 
 		document.getElementById("solarSystem").appendChild( renderer.domElement ); // Append the 3D scene in the page
 
 		clock = new THREE.Clock();
 		delta = clock.getDelta();
-		//camera.position.z = 20;
-		//camera.rotation.x = -0.2;
-
-		/*controls = new THREE.OrbitControls( camera, renderer.domElement );
-		controls.enableDamping = true;
-		controls.dampingFactor = 0.25;
-		controls.enableZoom = true;*/
-
-		var light = new THREE.PointLight( 0xFFFFFF, 1, 200, 2 );
-		var ambientlight = new THREE.AmbientLight( 0x202020 );
-		scene.add(light);
-		scene.add(ambientlight);;
+		
+		HUD = new HUDControls(renderer, camera);
 
 		ajax("src/ressources.json", intializeStars )
 	}
 	
+	function initScene() {
+		scene = new THREE.Scene();
+		
+		var light = new THREE.PointLight( 0xFFFFFF, 1, 200, 2 );
+		var ambientlight = new THREE.AmbientLight( 0x202020 );
+		scene.add(light);
+		scene.add(ambientlight);
+	}
+	
 	function initHud() {
+		var width = window.innerWidth;
+		var height = window.innerHeight;
+		
+		sceneHud = new THREE.Scene();
+		cameraHud = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 1, 1000 );
+		
+		sceneHud.add(cameraHud);
+		sceneHud.add(new THREE.AmbientLight(0xffffff));
+		
+		initHud_test();
+	}
+	
+	function initHud_test() {
 		var hudGeometry = new THREE.ConeGeometry(0.1, 0.2, 16);
 		hudGeometry.rotateX(Math.PI * 0.5);
 		var hudMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide });
 
 		var hudData = new THREE.Mesh(hudGeometry, hudMaterial);
+		hudData.scale.set(100,100,100);
 		
 		sceneHud.add(hudData);
 	}
@@ -212,6 +225,8 @@ window.onload = function() {
 				function (texture) {
 					var ob = new Star(e, texture, scene);
 					celestialBodies.set(e.name, ob);
+					
+					HUD.trackObject(ob);
 
 					loadManagerVar.finished();
 				}
@@ -234,6 +249,8 @@ window.onload = function() {
 					var parentRef = celestialBodies.get(e.parentReference).getReference();
 					var ob = new Planet(e, texture, parentRef);
 					celestialBodies.set(e.name, ob);
+					
+					HUD.trackObject(ob);
 
 					loadManagerVar.finished();
 				}
@@ -256,6 +273,8 @@ window.onload = function() {
 					var parentRef = celestialBodies.get(e.parentReference).getReference();
 					var ob = new Satellite(e, texture, parentRef);
 					celestialBodies.set(e.name, ob);
+					
+					HUD.trackObject(ob);
 
 					loadManagerVar.finished();
 				}
@@ -272,9 +291,11 @@ window.onload = function() {
 		loader.load(
 			"src/rocket_ship.json",
 			function ( obj ) {
-				var playerShip = new Spaceship(obj, scene);
+				var playerShip = new Spaceship(obj, scene, camera);
 				controls = playerShip.getControls(camera, renderer.domElement);
 				ships.set("player", playerShip);
+				
+				//HUD.camera = playerShip.reference;
 				
 				loadManagerVar.finished();
 			}
@@ -316,16 +337,25 @@ window.onload = function() {
 		});
 
 		delta = clock.getDelta();
-		controls.update( delta );
-		//renderer.render( scene, camera );
+		controls.update( delta );		
 		
-		//renderer.clear();
-		renderer.render(scene, camera);
-		//renderer.clearDepth();
-		//renderer.render(sceneHud, cameraHud);
+		renderScenes();
 	}
-
-	window.onresize = function () {
+	
+	function renderScenes() {
+		renderer.clear();
+		
+		renderer.render(scene, camera); //*
+		
+		/*renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+		renderer.clearDepth();
+		renderer.render(sceneHud, cameraHud);*/
+		HUD.update();
+	}
+	
+	window.addEventListener( 'resize', onResize, false );
+	
+	function onResize() {
 		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
 		
@@ -333,5 +363,5 @@ window.onload = function() {
 		//cameraHud.updateProjectionMatrix();
 		
 		renderer.setSize( window.innerWidth, window.innerHeight );
-	};
+	}
 }
