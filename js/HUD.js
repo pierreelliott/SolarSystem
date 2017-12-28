@@ -132,7 +132,7 @@ function HUDControls(renderer, camera) {
 	window.addEventListener( 'resize', onResize, false );
 	
 	function onResize() {
-		cameraHud.aspect = window.innerWidth / window.innerHeight;
-		cameraHud.updateProjectionMatrix();
+		scope.cameraHud.aspect = window.innerWidth / window.innerHeight;
+		scope.cameraHud.updateProjectionMatrix();
 	}
 }
