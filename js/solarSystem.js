@@ -5,7 +5,7 @@
  * All rights reserved
  */
 
-window.addEventListener( 'load', SolarSystem, false );	
+window.addEventListener( 'load', SolarSystem, false );
 
 
 function SolarSystem() {
@@ -100,7 +100,7 @@ function SolarSystem() {
 			this.reference.add(mesh);
 		}
 	}
-	
+
 	class Spaceship {
 		constructor(object, parentReference, camera) {
 			this.mesh = object;
@@ -110,25 +110,25 @@ function SolarSystem() {
 			this.reference.position.z = 10;
 			this.mesh.scale.setScalar(0.001);
 			this.mesh.rotation.y = Math.PI;
-			
+
 			this.reference.add(camera);
 			camera.rotation.x = 0.1;
 			camera.position.z = 0.1;
 		}
-		getControls(camera, domElem) {			
+		getControls(camera, domElem) {
 			var controls = new THREE.FlyControls( this.reference, domElem, {camera: camera} );
 			controls.movementSpeed = 5;
 			controls.rollSpeed = Math.PI / 4;
 			controls.autoForward = false;
-			controls.dragToLook = true;
-			
+			controls.dragToLook = false;
+
 			return controls;
 		}
 	}
-	
+
 	//setTimeout(hideLoadingPanel, 5000);
 	var container, stats;
-	var camera, scene, renderer;
+	//var camera, scene, renderer;
 	var cameraHud, sceneHud;
 	var clock, controls, delta;
 	celestialBodies = new Map();
@@ -136,7 +136,7 @@ function SolarSystem() {
 
 	earthDay = 0.005;
 	astronomicalUnit = 10;
-	
+
 	var HUD;
 
 	init();
@@ -145,8 +145,10 @@ function SolarSystem() {
 	function init() {
 		initScene();
 		//initHud();
-		
-		var fieldOfView = 100,
+
+		initSkybox();
+
+		var fieldOfView = 80,
 			aspectRatio = window.innerWidth / window.innerHeight,
 			nearPlane = 0.01,
 			farPlane = 1000;
@@ -155,41 +157,60 @@ function SolarSystem() {
 		renderer = new THREE.WebGLRenderer();
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		renderer.autoClear = false;
-            renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setPixelRatio(window.devicePixelRatio);
 		renderer.shadowMap.enabled = true;
 
 		document.getElementById("solarSystem").appendChild( renderer.domElement ); // Append the 3D scene in the page
 
 		clock = new THREE.Clock();
 		delta = clock.getDelta();
-		
+
 		HUD = new HUDControls(renderer, camera);
 
 		ajax("src/ressources.json", intializeStars )
 	}
-	
+
 	function initScene() {
 		scene = new THREE.Scene();
-		
+
 		var light = new THREE.PointLight( 0xFFFFFF, 1, 200, 2 );
 		var ambientlight = new THREE.AmbientLight( 0x202020 );
 		scene.add(light);
 		scene.add(ambientlight);
 	}
-	
+
+	function initSkybox() {
+		var skyboxPath = 'src/textures/skybox2/';
+		var skyboxFormat = '.png';
+
+		var skyboxTextures = [
+			skyboxPath + 'right' + skyboxFormat,
+			skyboxPath + 'left' + skyboxFormat,
+			skyboxPath + 'top' + skyboxFormat,
+			skyboxPath + 'bottom' + skyboxFormat,
+			skyboxPath + 'front' + skyboxFormat,
+			skyboxPath + 'back' + skyboxFormat,
+		];
+
+		var skybox = new THREE.CubeTextureLoader().load(skyboxTextures);
+		//	skybox.format = THREE.RGBFormat;
+
+		scene.background = skybox;
+	}
+
 	function initHud() {
 		var width = window.innerWidth;
 		var height = window.innerHeight;
-		
+
 		sceneHud = new THREE.Scene();
 		cameraHud = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 1, 1000 );
-		
+
 		sceneHud.add(cameraHud);
 		sceneHud.add(new THREE.AmbientLight(0xffffff));
-		
+
 		initHud_test();
 	}
-	
+
 	function initHud_test() {
 		var hudGeometry = new THREE.ConeGeometry(0.1, 0.2, 16);
 		hudGeometry.rotateX(Math.PI * 0.5);
@@ -197,7 +218,7 @@ function SolarSystem() {
 
 		var hudData = new THREE.Mesh(hudGeometry, hudMaterial);
 		hudData.scale.set(100,100,100);
-		
+
 		sceneHud.add(hudData);
 	}
 
@@ -225,7 +246,7 @@ function SolarSystem() {
 				function (texture) {
 					var ob = new Star(e, texture, scene);
 					celestialBodies.set(e.name, ob);
-					
+
 					HUD.trackObject(ob);
 
 					loadManagerVar.finished();
@@ -249,7 +270,7 @@ function SolarSystem() {
 					var parentRef = celestialBodies.get(e.parentReference).getReference();
 					var ob = new Planet(e, texture, parentRef);
 					celestialBodies.set(e.name, ob);
-					
+
 					HUD.trackObject(ob);
 
 					loadManagerVar.finished();
@@ -273,7 +294,7 @@ function SolarSystem() {
 					var parentRef = celestialBodies.get(e.parentReference).getReference();
 					var ob = new Satellite(e, texture, parentRef);
 					celestialBodies.set(e.name, ob);
-					
+
 					HUD.trackObject(ob);
 
 					loadManagerVar.finished();
@@ -281,7 +302,7 @@ function SolarSystem() {
 			);
 		});
 	}
-	
+
 	function initializeSpaceship() {
 		var loader = new THREE.ObjectLoader();
 		var loadManagerVar = new LoadManager(1,function() {
@@ -294,9 +315,9 @@ function SolarSystem() {
 				var playerShip = new Spaceship(obj, scene, camera);
 				controls = playerShip.getControls(camera, renderer.domElement);
 				ships.set("player", playerShip);
-				
+
 				//HUD.camera = playerShip.reference;
-				
+
 				loadManagerVar.finished();
 			}
 		);
@@ -306,7 +327,7 @@ function SolarSystem() {
 		this.numberObjectsCreated = 0;
 		this.max = count;
 		this.callback = callback;
-		
+
 		this.finished = function () {
 			this.numberObjectsCreated++;
 			//console.log(this.numberObjectsCreated+" objets créés");
@@ -337,31 +358,31 @@ function SolarSystem() {
 		});
 
 		delta = clock.getDelta();
-		controls.update( delta );		
-		
+		controls.update( delta );
+
 		renderScenes();
 	}
-	
+
 	function renderScenes() {
 		renderer.clear();
-		
+
 		renderer.render(scene, camera); //*
-		
+
 		/*renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
 		renderer.clearDepth();
 		renderer.render(sceneHud, cameraHud);*/
 		HUD.update();
 	}
-	
+
 	window.addEventListener( 'resize', onResize, false );
-	
+
 	function onResize() {
 		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
-		
+
 		//cameraHud.aspect = window.innerWidth / window.innerHeight;
 		//cameraHud.updateProjectionMatrix();
-		
+
 		renderer.setSize( window.innerWidth, window.innerHeight );
 	}
 }

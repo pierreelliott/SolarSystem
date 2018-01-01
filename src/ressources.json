@@ -1,7 +1,6 @@
 {
 	"solarSystem": {
-		"stars": [
-			{
+		"skybox": {
 				"name": "stars",
 				"texture": "src/textures/stars_low.jpg",
 				"mass": 0,
@@ -22,6 +21,7 @@
 				"orbitalRotation": 0,
 				"siderealRotation": 0
 			},
+		"stars": [
 			{
 				"name": "sun",
 				"texture": "src/textures/sun_low.jpg",

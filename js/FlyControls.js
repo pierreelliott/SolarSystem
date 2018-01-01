@@ -11,14 +11,14 @@ THREE.FlyControls = function ( object, domElement ) {
 	if ( domElement ) this.domElement.setAttribute( 'tabindex', - 1 );
 
 	// API
-	
+
 	// Set to false to disable this control
 	this.enabled = true;
-	
+
 	// Set to true to enable damping (inertia)
 	this.enableDamping = false;
 	this.dampingFactor = 0.25;
-	
+
 	// Set to true/false to enable corresponding moving axis
 	this.enableYawing = true; 				// Yaw left / Yaw right
 	this.enablePitching = true; 			// Pitch up / Pitch down
@@ -29,7 +29,7 @@ THREE.FlyControls = function ( object, domElement ) {
 
 	this.movementSpeed = 1.0;
 	this.rollSpeed = 0.005;
-	
+
 	this.speed = {
 		FORWARD: 1, BACKWARD: 1,
 		YAWLEFT: 0.005, YAWRIGHT: 0.005,
@@ -49,7 +49,7 @@ THREE.FlyControls = function ( object, domElement ) {
 
 	// Set to true to allow moving with the mouse
 	this.dragToLook = false;
-	
+
 	// Set to true to enable auto-forward
 	// If enabled, the object will continue to move forward until it slows down ('Backward key' is pushed)
 	this.autoForward = false;
@@ -61,7 +61,7 @@ THREE.FlyControls = function ( object, domElement ) {
 	this.tmpQuaternion = new THREE.Quaternion();
 
 	this.mouseStatus = 0;
-	
+
 	this.keys = {
 		FORWARD: 90 /*Z*/, BACKWARD: 83 /*S*/,
 		YAWLEFT: 81 /*Q*/, YAWRIGHT: 68 /*D*/,
@@ -74,7 +74,7 @@ THREE.FlyControls = function ( object, domElement ) {
 	this.moveState = { up: 0, down: 0, left: 0, right: 0, forward: 0, back: 0, pitchUp: 0, pitchDown: 0, yawLeft: 0, yawRight: 0, rollLeft: 0, rollRight: 0 };
 	this.moveVector = new THREE.Vector3( 0, 0, 0 );
 	this.rotationVector = new THREE.Vector3( 0, 0, 0 );
-	
+
 	// ====== Public methods ======
 
 	this.handleEvent = function ( event ) {
@@ -86,7 +86,7 @@ THREE.FlyControls = function ( object, domElement ) {
 		}
 
 	};
-	
+
 	this.update = function( delta ) {
 
 		var moveMult = delta * this.movementSpeed;
@@ -103,7 +103,7 @@ THREE.FlyControls = function ( object, domElement ) {
 		this.object.rotation.setFromQuaternion( this.object.quaternion, this.object.rotation.order );
 
 	};
-	
+
 	this.getContainerDimensions = function() {
 
 		if ( this.domElement != document ) {
@@ -123,7 +123,7 @@ THREE.FlyControls = function ( object, domElement ) {
 		}
 
 	};
-	
+
 	this.dispose = function() {
 
 		this.domElement.removeEventListener( 'contextmenu', contextmenu, false );
@@ -135,11 +135,11 @@ THREE.FlyControls = function ( object, domElement ) {
 		window.removeEventListener( 'keyup', _keyup, false );
 
 	};
-	
+
 	// ====== Internals ======
-	
+
 	var scope = this;
-	
+
 	/*function moveMult(axis) {
 		var mult;
 		switch(axis) {
@@ -154,15 +154,15 @@ THREE.FlyControls = function ( object, domElement ) {
 				break;
 		}
 	}
-	
+
 	function rotMult(axis) {
 		switch(axis) {
-			
+
 		}
 	}*/
 
 	function keydown( event ) {
-		
+
 		if ( scope.enabled === false ) return;
 
 		if ( event.altKey ) return;
@@ -235,7 +235,7 @@ THREE.FlyControls = function ( object, domElement ) {
 	};
 
 	function keyup( event ) {
-		
+
 		if ( scope.enabled === false ) return;
 
 		switch ( event.keyCode ) {
@@ -268,7 +268,7 @@ THREE.FlyControls = function ( object, domElement ) {
 	};
 
 	function mousedown( event ) {
-		
+
 		if ( scope.enabled === false ) return;
 
 		if ( scope.domElement !== document ) {
@@ -284,7 +284,7 @@ THREE.FlyControls = function ( object, domElement ) {
 
 			scope.mouseStatus ++;
 
-		} else {
+		} /*else {
 
 			switch ( event.button ) {
 
@@ -295,15 +295,15 @@ THREE.FlyControls = function ( object, domElement ) {
 
 			updateMovementVector();
 
-		}
+		}*/
 
 	};
 
 	function mousemove( event ) {
-		
+
 		if ( scope.enabled === false ) return;
 
-		if ( ! scope.dragToLook || scope.mouseStatus > 0 ) {
+		if ( scope.dragToLook || scope.mouseStatus > 0 ) {
 
 			var container = scope.getContainerDimensions();
 			var halfWidth  = container.size[ 0 ] / 2;
@@ -319,7 +319,7 @@ THREE.FlyControls = function ( object, domElement ) {
 	};
 
 	function mouseup( event ) {
-		
+
 		if ( scope.enabled === false ) return;
 
 		event.preventDefault();
@@ -367,6 +367,8 @@ THREE.FlyControls = function ( object, domElement ) {
 		scope.rotationVector.z = ( - scope.moveState.rollRight + scope.moveState.rollLeft );
 
 		//console.log( 'rotate:', [ scope.rotationVector.x, scope.rotationVector.y, scope.rotationVector.z ] );
+		//console.log("rotation: ", [scope.object.rotation.x/Math.PI, scope.object.rotation.y/Math.PI, scope.object.rotation.z/Math.PI]);
+		//console.log(scope.object.quaternion.y);
 
 	};
 
@@ -387,7 +389,7 @@ THREE.FlyControls = function ( object, domElement ) {
 	}
 
 	// ====== Events ======
-	
+
 	var _mousemove = bind( this, mousemove );
 	var _mousedown = bind( this, mousedown );
 	var _mouseup = bind( this, mouseup );
