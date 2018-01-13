@@ -26,14 +26,11 @@ function SolarSystem() {
 			this.positionInSpace.position.multiplyScalar(astronomicalUnit);
 			this.positionInSpace.name = file.name + "Position";
 			this.positionInSpace.add(this.reference);
-
-			this.numberOfRotation = 0;
 		}
 		rotate() {
 			this.centerOfGravity.rotation.y += getRotationAngle(this.orbitalRotation);
 			this.reference.rotation.y += getRotationAngle(this.siderealRotation);
-			this.numberOfRotation++;
-
+			
 			function getRotationAngle(r) {
 				if(r == 0) { return 0; }
 				else { return earthDay/r; }
