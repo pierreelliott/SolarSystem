@@ -11,29 +11,42 @@ window.addEventListener( 'load', SolarSystem, false );
 function SolarSystem() {
 	class CelestialBody {
 		constructor(file, parentReference, type) {
+			/* The point around which the body gravitate */
 			this.centerOfGravity = new THREE.Object3D();
-			this.positionInSpace = new THREE.Object3D();
+			
+			/* The point where the body is relative to its centerOfGravity
+			It is the point which actually rotate around the center */
+			var positionInSpace = new THREE.Object3D();
+			
+			/* The reference to the body */
 			this.reference = new THREE.Object3D();
+			
+			/* Informations about the body */
 			this.name = file.name;
-			this.orbitalRotation = file.orbitalRotation; // Rotation around its parent
-			this.siderealRotation = file.siderealRotation; // Rotation on itself
+			this.orbit = file.orbit; // Parameters of the body's orbit
+			this.rotation = file.rotation; // Parameters of the body's rotation (on itself)
 			this.mass = file.mass;
 			this.type = type;
 
 			parentReference.add(this.centerOfGravity);
-			this.centerOfGravity.add(this.positionInSpace);
-			this.positionInSpace.position.fromArray(file.reference.position); // Unité en UA
-			this.positionInSpace.position.multiplyScalar(astronomicalUnit);
-			this.positionInSpace.name = file.name + "Position";
-			this.positionInSpace.add(this.reference);
+			this.centerOfGravity.add(positionInSpace);
+			
+			positionInSpace.position.x(file.orbit.distance); // Unity in AU (Astronomical Unit)
+			positionInSpace.position.multiplyScalar(astronomicalUnit);
+			
+			positionInSpace.add(this.reference);
 		}
 		rotate() {
-			this.centerOfGravity.rotation.y += getRotationAngle(this.orbitalRotation);
-			this.reference.rotation.y += getRotationAngle(this.siderealRotation);
+			var orbit = this.orbit.period;
+			var rotation = this.rotation.period;
+			var date = new Date();
+			
+			this.centerOfGravity.rotation.y = getRotationAngle(orbit);
+			this.reference.rotation.y += getRotationAngle(rotation);
 			
 			function getRotationAngle(r) {
 				if(r == 0) { return 0; }
-				else { return earthDay/r; }
+				else { return (date%orbit)/(2*Math.PI);; }
 			}
 		}
 		getType() { return this.type; }
@@ -164,7 +177,7 @@ function SolarSystem() {
 
 		HUD = new HUDControls(renderer, camera);
 
-		ajax("src/ressources.json", intializeStars )
+		ajax("src/ressources.json", initializeSystem )
 	}
 
 	function initScene() {
@@ -195,30 +208,6 @@ function SolarSystem() {
 		scene.background = skybox;
 	}
 
-	function initHud() {
-		var width = window.innerWidth;
-		var height = window.innerHeight;
-
-		sceneHud = new THREE.Scene();
-		cameraHud = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 1, 1000 );
-
-		sceneHud.add(cameraHud);
-		sceneHud.add(new THREE.AmbientLight(0xffffff));
-
-		initHud_test();
-	}
-
-	function initHud_test() {
-		var hudGeometry = new THREE.ConeGeometry(0.1, 0.2, 16);
-		hudGeometry.rotateX(Math.PI * 0.5);
-		var hudMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide });
-
-		var hudData = new THREE.Mesh(hudGeometry, hudMaterial);
-		hudData.scale.set(100,100,100);
-
-		sceneHud.add(hudData);
-	}
-
 	function ajax(data_url, callback) {
 		$.getJSON(data_url, function (data,status,xhr) {
 			if(status === "success") {
@@ -227,6 +216,52 @@ function SolarSystem() {
 				console.log("Error " + status);
 			}
 		});
+	}
+	
+	function initializeSystem(jsonFile) {
+		var system = jsonFile.system.bodies;
+		var loader = new THREE.TextureLoader();
+		
+		var bodiesCount = 0;
+		(function countBodies(body) {
+			bodiesCount++;
+			if(body.children !== undefined) {
+				body.children.forEach( function(e) {
+					countBodies(e);
+				});
+			}
+		})(system);
+
+		var loadManagerVar = new LoadManager(bodiesCount,function() {
+			initializeSpaceship();
+		});
+		
+		loadCelestialBody(system, scene);
+		
+		function loadCelestialBody(body, parentRef) {
+			loader.load(
+				body.texture,
+				function (texture) {
+					var ob;
+					switch(body.type) {
+						case "E": ob = new Star(body, texture, parentRef); break;
+						case "P": ob = new Planet(body, texture, parentRef); break;
+						case "S": ob = new Satellite(body, texture, parentRef); break;
+					}
+					celestialBodies.set(body.name, ob);
+					HUD.trackObject(ob);
+					loadManagerVar.finished();
+					
+					/* If the celestial body has children (moons for a planet, planets for a star, ...),
+						initialize them	*/
+					if(body.children !== undefined) {
+						body.children.forEach( function(e) {
+							loadCelestialBody(e, ob.getReference());
+						});
+					}
+				}
+			);
+		}
 	}
 
 	function intializeStars(jsonFile) {

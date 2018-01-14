@@ -1,6 +1,6 @@
 {
-	"solarSystem": {
-		"star": {
+	"system": {
+		"bodies": {
 			"name": "sun",
 			"type": "E",
 			"texture": "src/textures/sun_low.jpg",
@@ -10,7 +10,7 @@
 				"emissive": "white"
 			},
 			"orbit": {
-				"semi-major-axis": 0,
+				"distance": 0,
 				"period": 0,
 				"ecliptic-inclination": 0
 			},
@@ -19,7 +19,7 @@
 				"obliquity": 7.25
 			},
 			"radius": 696342,
-			"satellites": [
+			"children": [
 				{
 					"name": "mercury",
 					"type": "P",
@@ -29,7 +29,7 @@
 						"map": ""
 					},
 					"orbit": {
-						"semi-major-axis": 57909176,
+						"distance": 57909176,
 						"period": 87.96934,
 						"ecliptic-inclination": 7.00487
 					},
@@ -48,7 +48,7 @@
 						"map": ""
 					},
 					"orbit": {
-						"semi-major-axis": 108208930,
+						"distance": 108208930,
 						"period": 224.701,
 						"ecliptic-inclination": 3.39
 					},
@@ -67,7 +67,7 @@
 						"map": ""
 					},
 					"orbit": {
-						"semi-major-axis": 149597887.5,
+						"distance": 149597887.5,
 						"period": 365.256,
 						"ecliptic-inclination": 0
 					},
@@ -76,7 +76,7 @@
 						"obliquity": 23.43708
 					},
 					"radius": 6371.008,
-					"satellites": [
+					"children": [
 						{
 							"name": "moon",
 							"type": "S",
@@ -86,7 +86,7 @@
 								"map": ""
 							},
 							"orbit": {
-								"semi-major-axis": 384399,
+								"distance": 384399,
 								"period": 27.321582,
 								"ecliptic-inclination": 5.145
 							},
@@ -107,7 +107,7 @@
 						"map": ""
 					},
 					"orbit": {
-						"semi-major-axis": 227937000,
+						"distance": 227937000,
 						"period": 686.971,
 						"ecliptic-inclination": 1.85061
 					},
@@ -126,7 +126,7 @@
 						"map": ""
 					},
 					"orbit": {
-						"semi-major-axis": 778412027,
+						"distance": 778412027,
 						"period": 4335.3545,
 						"ecliptic-inclination": 1.3053
 					},
@@ -145,7 +145,7 @@
 						"map": ""
 					},
 					"orbit": {
-						"semi-major-axis": 1429394069,
+						"distance": 1429394069,
 						"period": 10757.7365,
 						"ecliptic-inclination": 2.48446
 					},
@@ -164,7 +164,7 @@
 						"map": ""
 					},
 					"orbit": {
-						"semi-major-axis": 2870658186,
+						"distance": 2870658186,
 						"period": 30687.15,
 						"ecliptic-inclination": 0.77
 					},
@@ -183,7 +183,7 @@
 						"map": ""
 					},
 					"orbit": {
-						"semi-major-axis": 4503443661,
+						"distance": 4503443661,
 						"period": 60224.9036,
 						"ecliptic-inclination": 1.76917
 					},
