@@ -15,7 +15,7 @@
 				"ecliptic-inclination": 0
 			},
 			"rotation": {
-				"period": 27,28,
+				"period": 27.28,
 				"obliquity": 7.25
 			},
 			"radius": 696342,

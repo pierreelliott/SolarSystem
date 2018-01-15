@@ -16,10 +16,11 @@ function HUDControls(renderer, camera) {
 
 	this.trackedItemsArray = [];
 
+	// Change the color of the tracker
 	this.colors = {
-		PLANET: 0x00FF00,
-		STAR: 0xFF0000,
-		SATELLITE: 0x0000FF
+		type1: 0xFF0000,
+		type2: 0x00FF00,
+		type3: 0x0000FF
 	}
 
 	// ========== Public methods ==========
@@ -38,14 +39,15 @@ function HUDControls(renderer, camera) {
 	this.trackObject = function(trackedItem) {
 		var hudGeometry = new THREE.ConeGeometry(0.1, 0.2, 16);
 		hudGeometry.rotateX(Math.PI * 0.5);
-		var hudMaterial = new THREE.MeshPhongMaterial({ color: this.colors[trackedItem.type], side: THREE.DoubleSide });
+		var objectColor = this.colors[trackedItem.type] ? this.colors[trackedItem.type] : 0x000000;
+		var hudMaterial = new THREE.MeshPhongMaterial({ color: objectColor, side: THREE.DoubleSide });
 		//console.log("Astre " + trackedItem.name + " de type : '" + trackedItem.type +"' et de couleur : '" + this.colors[trackedItem.type] + "'");
 
 
 		var hudData = new THREE.Mesh(hudGeometry, hudMaterial);
 
 		hudData.scale.set(50, 50, 50);
-		//hudData.visible = false;
+		hudData.visible = trackedItem.visible ? trackedItem.visible : true;
 		hudData.tracked = trackedItem.reference;
 
 		this.trackedItemsArray.push(trackedItem);
