@@ -8,6 +8,7 @@ function HUDControls(renderer, camera) {
 
 	this.sceneHUD = new THREE.Scene();
 	this.cameraHUD = new THREE.OrthographicCamera( WIDTH / - 2, WIDTH / 2, HEIGHT / 2, HEIGHT / - 2, 1, 1000 );
+	//console.log(this.cameraHUD);
 	this.sceneHUD.add(this.cameraHUD);
 	this.sceneHUD.add(new THREE.AmbientLight(0xffffff));
 
@@ -61,17 +62,17 @@ function HUDControls(renderer, camera) {
 	var cameraOrthographic = scope.cameraHUD;
 
 	function updateTrackedItems() {
-		var centerPoint = new THREE.Vector3(0, 0, 1);
+		var centerPoint = cameraPerspective.position;
 
 		scope.trackedItemsGroup.children.forEach(function(tracker) {
 
 			var target = tracker.tracked;
 
-			if (true){ //checkCameraPlane(target, cameraPerspective)) {
+			if (checkCameraPlane(target, cameraPerspective)) {
 
 				var position = findHudPosition(target, cameraPerspective);
 
-				if (position.distanceTo(centerPoint) <= 400) {
+				if (position.distanceTo(centerPoint) <= 400 && position.dot(centerPoint) >= 0) {
 					tracker.lookAt(cameraOrthographic);
 				} else {
 					tracker.lookAt(position);
@@ -79,20 +80,24 @@ function HUDControls(renderer, camera) {
 				}
 
 				tracker.position.set(position.x, position.y, position.z);
-				//tracker.visible = true;
+				tracker.visible = true;
 
 			} else {
-
 				tracker.visible = false;
+				/*var position = findHudPosition(target, cameraPerspective);
+				tracker.lookAt(position);
+				position.clampLength(0, 400);
+				tracker.position.set(position.x, position.y, position.z);*/
 
 			}
 		});
 	}
 
+	/* Vérifie que l'objet soit "en face" de la caméra */
 	function checkCameraPlane(obj, camera) {
 		var cameraDirection = camera.getWorldDirection();
 		var objectDirection = new THREE.Vector3(0, 0, 0);
-		objectDirection.subVectors(obj.position, camera.position);
+		objectDirection.subVectors(obj.getWorldPosition(), camera.getWorldPosition());
 
 		return cameraDirection.dot(objectDirection) >= 0;
 	}
@@ -112,18 +117,13 @@ function HUDControls(renderer, camera) {
 	}
 
 	function render() {
-		scope.renderer.setViewport(0, 0, WIDTH, HEIGHT);
 		scope.renderer.clearDepth();
 
 		scope.renderer.render(scope.sceneHUD, scope.cameraHUD);
 	}
 
-	// =========== Events =============
-
-	window.addEventListener( 'resize', onResize, false );
-
-	function onResize() {
-		scope.cameraHud.aspect = window.innerWidth / window.innerHeight;
-		scope.cameraHud.updateProjectionMatrix();
+	this.resize = function(width, height) {
+		scope.cameraHUD.aspect = width / height;
+		scope.cameraHUD.updateProjectionMatrix();
 	}
 }
