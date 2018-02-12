@@ -25,13 +25,16 @@ function SolarSystem() {
 		constructor(file, parentReference, texture) {
 			/* The point around which the body gravitate */
 			this.centerOfGravity = new THREE.Object3D();
+			this.centerOfGravity.name = file.name + "Gravity";
 
 			/* The point where the body is relative to its centerOfGravity
 			It is the point which actually rotate around the center */
 			this.positionInSpace = new THREE.Object3D();
+			this.positionInSpace.name = file.name + "Position";
 
 			/* The reference to the body */
 			this.reference = new THREE.Object3D();
+			this.reference.name = file.name + "Reference";
 
 			/* Informations about the body */
 			this.name = file.name;
@@ -50,13 +53,16 @@ function SolarSystem() {
 
 			this.positionInSpace.add(this.reference);
 
+			//file.material.side = THREE.DoubleSide;
+			var material;
 			if (file.type == "E") {
 				file.material.emissiveMap = texture;
+				material = new THREE.MeshLambertMaterial( file.material );
 			} else {
 				file.material.map = texture;
+				material = new THREE.MeshPhongMaterial( file.material );
 			}
 
-			var material = new THREE.MeshPhongMaterial( file.material );
 			var ball = new THREE.SphereGeometry(1, 32, 32);
 			var mesh = new THREE.Mesh(ball, material);
 
@@ -104,9 +110,17 @@ function SolarSystem() {
 			this.mesh = object;
 			this.reference = new THREE.Object3D();
 			this.reference.add(this.mesh);
+			this.reference.name = "SpaceShip";
 			//parentReference = celestialBodies.get("sun").getReference();
 			parentReference.add(this.reference);
-			this.reference.position.z = 1500000*kilometre;
+			console.log(celestialBodies.get("earth").reference.rotation);
+			console.log(celestialBodies.get("earth").reference.getWorldPosition().distanceTo(this.reference.position));
+			var earthPos = celestialBodies.get("earth").reference.getWorldPosition().x;
+			var earthRot = celestialBodies.get("earth").centerOfGravity.rotation.y;
+			this.reference.position.set(Math.cos(earthRot)*earthPos, 0, -1*Math.sin(earthRot)*earthPos);
+			console.log(this.reference.position);
+			this.reference.position.z += 10*kilometre;
+			//this.reference.position.z = 1500000*kilometre;
 			this.mesh.scale.setScalar(10);
 			this.mesh.rotation.y = Math.PI;
 
@@ -150,7 +164,7 @@ function SolarSystem() {
 		var fieldOfView = 80,
 			aspectRatio = window.innerWidth / window.innerHeight,
 			nearPlane = 0.01,
-			farPlane = 150*1000*1000*kilometre;
+			farPlane = 150*1000*kilometre;
 		camera = new THREE.PerspectiveCamera( fieldOfView, aspectRatio, nearPlane, farPlane );
 
 		renderer = new THREE.WebGLRenderer();
@@ -179,7 +193,7 @@ function SolarSystem() {
 	function initScene() {
 		scene = new THREE.Scene();
 
-		var light = new THREE.PointLight( 0xFFFFFF, 1, 200, 2 );
+		var light = new THREE.PointLight( 0xFFFFFF, 0.5, 0, 1 );
 		var ambientlight = new THREE.AmbientLight( 0x202020 );
 		scene.add(light);
 		scene.add(ambientlight);
