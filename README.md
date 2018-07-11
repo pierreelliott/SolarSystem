@@ -18,13 +18,13 @@ Last thing: while all planets' rotation use the current Date to update their pos
 
 ## Planned features
 
-[ ] Add Saturn rings
-[ ] Add ability to select a planet
-[ ] Add ability to *switch point of view* (ie, changing the camera target)
-[ ] Change skybox to shine a little bit less
-[ ] Add ability to dynamically change distances and sizes
-[ ] Add other planetoids (Europe, Titan, Pluton, ...)
-[ ] Change orbits to be elliptic when needed (which is basically everywhere)
+- [ ] Add Saturn rings
+- [ ] Add ability to select a planet
+- [ ] Add ability to *switch point of view* (ie, changing the camera target)
+- [ ] Change skybox to shine a little bit less
+- [ ] Add ability to dynamically change distances and sizes
+- [ ] Add other planetoids (Europe, Titan, Pluton, ...)
+- [ ] Change orbits to be elliptic when needed (which is basically everywhere)
 
 ## Building and launching
 
