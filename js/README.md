@@ -37,3 +37,9 @@ Clone it, start a Web server (like Apache) and enjoy!
 A demo of this project is available at [this URL](https://pierreelliott.github.io/SolarSystem/)
 
 And the GitHub repository is [right here](https://github.com/pierreelliott/SolarSystem)
+
+## Credits
+
+All textures used don't belong to me nor do I claim any right on them.
+
+If I used your work and would like me to remove or give credit for it, just send me a message.
