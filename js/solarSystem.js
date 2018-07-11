@@ -5,99 +5,93 @@
  * All rights reserved
  */
 
-	class CelestialBody {
-		constructor(file, parentReference, type) {
-			this.centerOfGravity = new THREE.Object3D();
-			this.positionInSpace = new THREE.Object3D();
-			this.reference = new THREE.Object3D();
-			this.name = file.name;
-			this.orbitalRotation = file.orbitalRotation; // Rotation around its parent
-			this.siderealRotation = file.siderealRotation; // Rotation on itself
-			this.mass = file.mass;
-			this.type = type;
+ var kilometre = 1;
 
-			parentReference.add(this.centerOfGravity);
-			this.centerOfGravity.add(this.positionInSpace);
-			this.positionInSpace.position.fromArray(file.reference.position); // Unité en UA
-			this.positionInSpace.position.multiplyScalar(uniteAstronomique);
-			this.positionInSpace.name = file.name + "Position";
-			this.positionInSpace.add(this.reference);
+ class CelestialBody {
+	 constructor(file, parentReference, texture) {
+		 /* The point around which the body gravitate */
+		 this.centerOfGravity = new THREE.Object3D();
+		 this.centerOfGravity.name = file.name + "Gravity";
 
-			this.numberOfRotation = 0;
-		}
-		rotate() {
-			this.centerOfGravity.rotation.y += getRotationAngle(this.orbitalRotation);
-			this.reference.rotation.y += getRotationAngle(this.siderealRotation);
-			this.numberOfRotation++;
+		 /* The point where the body is relative to its centerOfGravity
+		 It is the point which actually rotate around the center */
+		 this.positionInSpace = new THREE.Object3D();
+		 this.positionInSpace.name = file.name + "Position";
 
-			function getRotationAngle(r) {
-				if(r == 0) { return 0; }
-				else { return earthDay/r; }
-			}
-		}
-		getType() { return this.type; }
-		getReference() { return this.positionInSpace; }
-	}
+		 /* The reference to the body */
+		 this.reference = new THREE.Object3D();
+		 this.reference.name = file.name + "Reference";
 
-	class Star extends CelestialBody {
-		constructor(file, texture, parentReference) {
-			super(file, parentReference, "Star");
+		 /* Informations about the body */
+		 this.name = file.name;
+		 this.orbit = file.orbit; // Parameters of the body's orbit
+		 this.rotation = file.rotation; // Parameters of the body's rotation (on itself)
+		 this.mass = file.mass;
+		 //this.type = type;
+		 this.type = file.type;
 
-			file.material.emissiveMap = texture;
-			file.material.map = texture;
-			var material = new THREE.MeshPhongMaterial( file.material );
-			var ball = new THREE.SphereGeometry(1, 32, 32);
-			var mesh = new THREE.Mesh(ball, material);
+		 parentReference.add(this.centerOfGravity);
+		 this.centerOfGravity.add(this.positionInSpace);
+		 this.centerOfGravity.rotation.x = file.orbit["ecliptic-inclination"] * Math.PI/180; // Because I use degree angles
 
-			mesh.scale.setScalar(file.mesh.scale);
-			//mesh.scale.multiplyScalar(0.001*uniteAstronomique);
-			mesh.rotation.fromArray(file.mesh.rotation);
+		 this.positionInSpace.position.x = file.orbit.distance;
+		 this.positionInSpace.position.multiplyScalar(12);
 
-			this.reference.add(mesh);
-		}
-	}
+		 this.positionInSpace.add(this.reference);
 
-	class Planet extends CelestialBody {
-		constructor(file, texture, parentReference) {
-			super(file, parentReference, "Planet");
+		 //file.material.side = THREE.DoubleSide;
+		 var material;
+		 if (file.type == "E") {
+			 file.material.emissiveMap = texture;
+			 material = new THREE.MeshLambertMaterial( file.material );
+		 } else {
+			 file.material.map = texture;
+			 material = new THREE.MeshPhongMaterial( file.material );
+		 }
 
-			file.material.map = texture;
-			var material = new THREE.MeshPhongMaterial( file.material );
-			var ball = new THREE.SphereGeometry(1, 32, 32);
-			var mesh = new THREE.Mesh(ball, material);
+		 var ball = new THREE.SphereGeometry(1, 32, 32);
+		 var mesh = new THREE.Mesh(ball, material);
 
-			//this.reference.position.multiplyScalar(uniteAstronomique);
-			// Il faudra penser à refléter l'absence de ce scalaire en changeant la valeur du vecteur de position
+		 mesh.scale.setScalar(file.radius*2);
+		 //mesh.scale.multiplyScalar(kilometre);
+		 mesh.rotation.x = file.rotation.obliquity * Math.PI/180; // Because I use degree angles
 
-			mesh.scale.setScalar(file.mesh.scale);
-			mesh.scale.multiplyScalar(0.1*uniteAstronomique);
-			mesh.rotation.fromArray(file.mesh.rotation);
+		 this.reference.add(mesh);
+	 }
+	 /**
+	 * rotate - Description
+	 *
+	 * @returns {type} Description
+	 */
+	 rotate(date) {
+		 var orbit = this.orbit.period;
+		 var orbitOffset = this.orbit.offset;
+		 var rotation = this.rotation.period;
+		 var rotationOffset = this.rotation.offset;
+		 if (!date instanceof Date) {
+			 date = new Date();
+		 }
+		 date = new Date();
+		 //var numberOfDays = millisecondsToDays(date);
+		 var numberOfDays = (date/5000); // For testing, ~5 hours = 1 second
 
-			this.reference.add(mesh);
-		}
-	}
+		 this.centerOfGravity.rotation.y = getRotationAngle(orbit, 0);
+		 this.reference.rotation.y = getRotationAngle(rotation, 0);
 
-	class Satellite extends CelestialBody {
-		constructor(file, texture, parentReference) {
-			super(file, parentReference, "Satellite");
+		 function getRotationAngle(period, offset) {
+			 if(period == 0) { return 0; }
+			 else { return (numberOfDays%period)/( period/(2*Math.PI) ) + offset; }
+		 }
 
-			file.material.map = texture;
-			var material = new THREE.MeshPhongMaterial( file.material );
-			var ball = new THREE.SphereGeometry(1, 32, 32);
-			var mesh = new THREE.Mesh(ball, material);
+		 function millisecondsToDays(date) {
+			 return (date/1000)/86400;
+		 }
+	 }
+	 getType() { return this.type; }
+	 getReference() { return this.positionInSpace; }
+ }
 
-			//this.reference.position.multiplyScalar(uniteAstronomique);
-			// Il faudra penser à refléter l'absence de ce scalaire en changeant la valeur du vecteur de position
-
-			mesh.scale.setScalar(file.mesh.scale);
-			mesh.scale.multiplyScalar(0.1*uniteAstronomique);
-			mesh.rotation.fromArray(file.mesh.rotation);
-
-			this.reference.add(mesh);
-		}
-	}
-
-window.onload = function() {
+window.addEventListener("load", function() {
 	var container, stats;
 	var camera, scene, renderer;
 	var clock, controls, delta;
@@ -115,6 +109,9 @@ window.onload = function() {
 
 	function init() {
 		scene = new THREE.Scene();
+
+		initSkybox();
+
 		camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
 		renderer = new THREE.WebGLRenderer();
@@ -140,7 +137,26 @@ window.onload = function() {
 		scene.add(light);
 		scene.add(ambientlight);;
 
-		ajax("src/ressources.json", intializeStars )
+		ajax("src/ressources.json", initializeSystem )
+	}
+
+	function initSkybox() {
+		var skyboxPath = 'src/textures/skybox2/';
+		var skyboxFormat = '.png';
+
+		var skyboxTextures = [
+			skyboxPath + 'right' + skyboxFormat,
+			skyboxPath + 'left' + skyboxFormat,
+			skyboxPath + 'top' + skyboxFormat,
+			skyboxPath + 'bottom' + skyboxFormat,
+			skyboxPath + 'front' + skyboxFormat,
+			skyboxPath + 'back' + skyboxFormat,
+		];
+
+		var skybox = new THREE.CubeTextureLoader().load(skyboxTextures);
+			skybox.format = THREE.RGBFormat;
+
+		scene.background = skybox;
 	}
 
 	function ajax(data_url, callback) {
@@ -153,69 +169,46 @@ window.onload = function() {
 		});
 	}
 
-	function intializeStars(jsonFile) {
-		var objects = jsonFile.solarSystem.stars;
+	function initializeSystem(jsonFile) {
+		var system = jsonFile.system.bodies;
 		var loader = new THREE.TextureLoader();
 
-		var loadManagerVar = new LoadManager(objects.length,function() {
-			initializePlanets(jsonFile);
+		var bodiesCount = 0;
+		(function countBodies(body) {
+			bodiesCount++;
+			if(body.children !== undefined) {
+				body.children.forEach( function(e) {
+					countBodies(e);
+				});
+			}
+		})(system);
+
+		var loadManagerVar = new LoadManager(bodiesCount,function() {
+			// initializeSpaceship();
+			animate();
 		});
 
-		objects.forEach( function (e) {
-			loader.load(
-				e.texture,
-				function (texture) {
-					var ob = new Star(e, texture, scene);
-					celestialBodies.set(e.name, ob);
+		loadCelestialBody(system, scene);
 
+		function loadCelestialBody(body, parentRef) {
+			loader.load(
+				body.texture,
+				function (texture) {
+					var ob = new CelestialBody(body, parentRef, texture);
+					celestialBodies.set(body.name, ob);
+					//HUD.trackObject(ob);
 					loadManagerVar.finished();
+
+					/* If the celestial body has children (moons for a planet, planets for a star, ...),
+						initialize them	*/
+					if(body.children !== undefined) {
+						body.children.forEach( function(e) {
+							loadCelestialBody(e, ob.getReference());
+						});
+					}
 				}
 			);
-		});
-	}
-
-	function initializePlanets(jsonFile) {
-		var objects = jsonFile.solarSystem.planets;
-		var loader = new THREE.TextureLoader();
-
-		var loadManagerVar = new LoadManager(objects.length,function() {
-			initializeSatellites(jsonFile);
-		});
-
-		objects.forEach( function (e) {
-			loader.load(
-				e.texture,
-				function (texture) {
-					var parentRef = celestialBodies.get(e.parentReference).getReference();
-					var ob = new Planet(e, texture, parentRef);
-					celestialBodies.set(e.name, ob);
-
-					loadManagerVar.finished();
-				}
-			);
-		});
-	}
-
-	function initializeSatellites(jsonFile) {
-		var objects = jsonFile.solarSystem.satellites;
-		var loader = new THREE.TextureLoader();
-
-		var loadManagerVar = new LoadManager(objects.length,function() {
-			randomizePosition();
-		});
-
-		objects.forEach( function (e) {
-			loader.load(
-				e.texture,
-				function (texture) {
-					var parentRef = celestialBodies.get(e.parentReference).getReference();
-					var ob = new Satellite(e, texture, parentRef);
-					celestialBodies.set(e.name, ob);
-
-					loadManagerVar.finished();
-				}
-			);
-		});
+		}
 	}
 
 	function LoadManager(count, callback) {
@@ -231,19 +224,6 @@ window.onload = function() {
 		}
 	}
 
-	function randomizePosition() {
-		var rand;
-		celestialBodies.forEach( function (obj, name) {
-			rand = Math.round(Math.random()*1000000);
-			console.log("Rand : " + rand);
-			for(var i; i < rand; i++) {
-				obj.rotate();
-			}
-		});
-
-		animate();
-	}
-
 	function animate() {
 		requestAnimationFrame( animate );
 
@@ -256,9 +236,9 @@ window.onload = function() {
 		renderer.render( scene, camera );
 	}
 
-	window.onresize = function () {
+	window.addEventListener("resize", function () {
 		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
 		renderer.setSize( window.innerWidth, window.innerHeight );
-	};
-}
+	});
+});

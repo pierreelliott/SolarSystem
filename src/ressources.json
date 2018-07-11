@@ -1,241 +1,218 @@
 {
-	"solarSystem": {
-		"stars": [
-			{
-				"name": "stars",
-				"texture": "src/textures/stars.jpg",
-				"mass": 0,
-
-				"repeat": [ 6 , 6 ],
-				"material": {
-					"map": "",
-					"side": 1
-				},
-				"reference": {
-					"position": [ 0, 0, 0 ]
-				},
-				"mesh": {
-					"rotation": [ 0, 0, 0 ],
-					"scale": 300
-				},
-				"parentReference": "",
-				"orbitalRotation": 0,
-				"siderealRotation": 0
+	"system": {
+		"bodies": {
+			"name": "sun",
+			"type": "E",
+			"texture": "src/textures/sun_low.jpg",
+			"mass": 0,
+			"material": {
+				"emissiveMap": "",
+				"emissive": "white"
 			},
-			{
-				"name": "sun",
-				"texture": "src/textures/sun.jpg",
-				"mass": 0,
-				"isEmissive": true,
-				"repeat": [ 1 , 1 ],
-				"material": {
-					"emissiveMap": "",
-					"emissive": "white",
-					"side": 0
-				},
-				"reference": {
-					"position": [ 0, 0, 0 ]
-				},
-				"mesh": {
-					"rotation": [ 0, 0, 0 ],
-					"scale": 2
-				},
-				"parentReference": "",
-				"orbitalRotation": 0,
-				"siderealRotation": 27.28
-			}
-		],
-		"planets": [
-			{
-				"name": "mercury",
-				"texture": "src/textures/mercure.jpg",
-				"mass": 0,
-
-				"repeat": [ 1 , 1 ],
-				"material": {
-					"map": "",
-					"side": 0
-				},
-				"reference": {
-					"position": [ 0.38, 0, 0 ]
-				},
-				"mesh": {
-					"rotation": [ 0, 0, 0 ],
-					"scale": 0.1
-				},
-				"parentReference": "sun",
-				"orbitalRotation": 87.969,
-				"siderealRotation": 58.646
+			"orbit": {
+				"distance": 0,
+				"period": 0,
+				"ecliptic-inclination": 0
 			},
-			{
-				"name": "venus",
-				"texture": "src/textures/venus.jpg",
-				"mass": 0,
-
-				"repeat": [ 1 , 1 ],
-				"material": {
-					"map": "",
-					"side": 0
-				},
-				"reference": {
-					"position": [ 0.72, 0, 0 ]
-				},
-				"mesh": {
-					"rotation": [ 0, 0, 0 ],
-					"scale": 0.29
-				},
-				"parentReference": "sun",
-				"orbitalRotation": 224.701,
-				"siderealRotation": -243.023
+			"rotation": {
+				"period": 27.28,
+				"obliquity": 7.25
 			},
-			{
-				"name": "earth",
-				"texture": "src/textures/earth.jpg",
-				"mass": 0,
-
-				"repeat": [ 1 , 1 ],
-				"material": {
-					"map": "",
-					"side": 0
+			"radius_real": 696342,
+			"radius": 2,
+			"children": [
+				{
+					"name": "mercury",
+					"type": "P",
+					"texture": "src/textures/mercure_low.jpg",
+					"mass": 0,
+					"material": {
+						"map": ""
+					},
+					"orbit": {
+						"distance_real": 57909176,
+						"distance": 0.38,
+						"period": 87.96934,
+						"ecliptic-inclination": 7.00487
+					},
+					"rotation": {
+						"period": 58.6462,
+						"obliquity": 0.0352
+					},
+					"radius_real": 2439.7,
+					"radius": 0.1
 				},
-				"reference": {
-					"position": [ 1, 0, 0 ]
+				{
+					"name": "venus",
+					"type": "P",
+					"texture": "src/textures/venus_low.jpg",
+					"mass": 0,
+					"material": {
+						"map": ""
+					},
+					"orbit": {
+						"distance_real": 108208930,
+						"distance": 0.72,
+						"period": 224.701,
+						"ecliptic-inclination": 3.39
+					},
+					"rotation": {
+						"period": -243.023,
+						"obliquity": 177.36
+					},
+					"radius_real": 6051.8,
+					"radius": 0.29
 				},
-				"mesh": {
-					"rotation": [ 0, 0, 0.2 ],
-					"scale": 0.3
+				{
+					"name": "earth",
+					"type": "P",
+					"texture": "src/textures/earth_low.jpg",
+					"mass": 0,
+					"material": {
+						"map": ""
+					},
+					"orbit": {
+						"distance_real": 149597887.5,
+						"distance": 1,
+						"period": 365.256,
+						"ecliptic-inclination": 0
+					},
+					"rotation": {
+						"period": 0.99726949,
+						"obliquity": 23.43708
+					},
+					"radius_real": 6371.008,
+					"radius": 0.3,
+					"children": [
+						{
+							"name": "moon",
+							"type": "S",
+							"texture": "src/textures/moon_low.jpg",
+							"mass": 0,
+							"material": {
+								"map": ""
+							},
+							"orbit": {
+								"distance_real": 384399,
+								"distance": 0.08,
+								"period": 27.321582,
+								"ecliptic-inclination": 5.145
+							},
+							"rotation": {
+								"period": 27.321582,
+								"obliquity": 6.687
+							},
+							"radius_real": 1737.4,
+							"radius": 0.06
+						}
+					]
 				},
-				"parentReference": "sun",
-				"orbitalRotation": 365.25,
-				"siderealRotation": 1
-			},
-			{
-				"name": "mars",
-				"texture": "src/textures/mars.jpg",
-				"mass": 0,
-
-				"repeat": [ 1 , 1 ],
-				"material": {
-					"map": "",
-					"side": 0
+				{
+					"name": "mars",
+					"type": "P",
+					"texture": "src/textures/mars_low.jpg",
+					"mass": 0,
+					"material": {
+						"map": ""
+					},
+					"orbit": {
+						"distance_real": 227937000,
+						"distance": 1.52,
+						"period": 686.971,
+						"ecliptic-inclination": 1.85061
+					},
+					"rotation": {
+						"period": 1.02749125,
+						"obliquity": 25.19
+					},
+					"radius_real": 3389.5,
+					"radius": 0.16
 				},
-				"reference": {
-					"position": [ 1.52, 0, 0 ]
+				{
+					"name": "jupiter",
+					"type": "G",
+					"texture": "src/textures/jupiter_low.jpg",
+					"mass": 0,
+					"material": {
+						"map": ""
+					},
+					"orbit": {
+						"distance_real": 778412027,
+						"distance": 5.21,
+						"period": 4335.3545,
+						"ecliptic-inclination": 1.3053
+					},
+					"rotation": {
+						"period": 0.41351,
+						"obliquity": 3.12
+					},
+					"radius_real": 69911,
+					"radius": 1.2
 				},
-				"mesh": {
-					"rotation": [ 0, 0, 0 ],
-					"scale": 0.16
+				{
+					"name": "saturn",
+					"type": "G",
+					"texture": "src/textures/saturn_low.jpg",
+					"mass": 0,
+					"material": {
+						"map": ""
+					},
+					"orbit": {
+						"distance_real": 1429394069,
+						"distance": 9.54,
+						"period": 10757.7365,
+						"ecliptic-inclination": 2.48446
+					},
+					"rotation": {
+						"period": 0.448,
+						"obliquity": 26.73
+					},
+					"radius_real": 58232,
+					"radius": 1.05
 				},
-				"parentReference": "sun",
-				"orbitalRotation": 686.96,
-				"siderealRotation": 1.026
-			},
-			{
-				"name": "jupiter",
-				"texture": "src/textures/jupiter.jpg",
-				"mass": 0,
-
-				"repeat": [ 1 , 1 ],
-				"material": {
-					"map": "",
-					"side": 0
+				{
+					"name": "uranus",
+					"type": "G",
+					"texture": "src/textures/uranus_low.jpg",
+					"mass": 0,
+					"material": {
+						"map": ""
+					},
+					"orbit": {
+						"distance_real": 2870658186,
+						"distance": 19.18,
+						"period": 30687.15,
+						"ecliptic-inclination": 0.77
+					},
+					"rotation": {
+						"period": -0.718,
+						"obliquity": 97.8
+					},
+					"radius_real": 25559,
+					"radius": 1.2
 				},
-				"reference": {
-					"position": [ 5.21, 0, 0 ]
-				},
-				"mesh": {
-					"rotation": [ 0, 0, 0 ],
-					"scale": 1.2
-				},
-				"parentReference": "sun",
-				"orbitalRotation": 4335.35,
-				"siderealRotation": 0.414
-			},
-			{
-				"name": "saturn",
-				"texture": "src/textures/saturn.jpg",
-				"mass": 0,
-
-				"repeat": [ 1 , 1 ],
-				"material": {
-					"map": "",
-					"side": 0
-				},
-				"reference": {
-					"position": [ 9.54, 0, 0 ]
-				},
-				"mesh": {
-					"rotation": [ 0, 0, 0 ],
-					"scale": 1.05
-				},
-				"parentReference": "sun",
-				"orbitalRotation": 10757.74,
-				"siderealRotation": 0.448
-			},
-			{
-				"name": "uranus",
-				"texture": "src/textures/uranus.jpg",
-				"mass": 0,
-
-				"repeat": [ 1 , 1 ],
-				"material": {
-					"map": "",
-					"side": 0
-				},
-				"reference": {
-					"position": [ 19.18, 0, 0 ]
-				},
-				"mesh": {
-					"rotation": [ 0, 0, 1.57 ],
-					"scale": 1.2
-				},
-				"parentReference": "sun",
-				"orbitalRotation": 30687.15,
-				"siderealRotation": -0.718
-			},
-			{
-				"name": "neptune",
-				"texture": "src/textures/neptune.jpg",
-				"mass": 0,
-
-				"repeat": [ 1 , 1 ],
-				"material": {
-					"map": "",
-					"side": 0
-				},
-				"reference": {
-					"position": [ 30.11, 0, 0 ]
-				},
-				"mesh": {
-					"rotation": [ 0, 0, 0 ],
-					"scale": 1.2
-				},
-				"parentReference": "sun",
-				"orbitalRotation": 60224.9,
-				"siderealRotation": 0.671
-			}
-		],
-		"satellites": [
-			{
-				"name": "moon",
-				"texture": "src/textures/moon.jpg",
-				"mass": 0,
-				"repeat": [ 1 , 1 ],
-				"material": {
-					"map": "",
-					"side": 0
-				},
-				"reference": {
-						"position": [ 0.08, 0, 0 ]
-				},
-				"mesh": {
-					"rotation": [ 0, 0, 0 ],
-					"scale": 0.06
-				},
-				"parentReference": "earth",
-				"orbitalRotation": 27.322,
-				"siderealRotation": 27.322
-			}
-		]
+				{
+					"name": "neptune",
+					"type": "G",
+					"texture": "src/textures/neptune_low.jpg",
+					"mass": 0,
+					"material": {
+						"map": ""
+					},
+					"orbit": {
+						"distance_real": 4503443661,
+						"distance": 30.11,
+						"period": 60224.9036,
+						"ecliptic-inclination": 1.76917
+					},
+					"rotation": {
+						"period": 0.67125,
+						"obliquity": 29.58
+					},
+					"radius_real": 24622,
+					"radius": 1.2
+				}
+			]
+		}
 	}
 }
